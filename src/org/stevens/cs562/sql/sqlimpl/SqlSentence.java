@@ -1,5 +1,7 @@
 package org.stevens.cs562.sql.sqlimpl;
 
+import org.stevens.cs562.utils.SQLStringParsers;
+
 public class SqlSentence {
 
 	/**
@@ -35,7 +37,13 @@ public class SqlSentence {
 	
 
 	public SqlSentence(String sql) {
-		
+		String[] tmp = SQLStringParsers.parseString(sql);
+		selectElement = new SelectElement(tmp[0]);
+		fromElement = new FromElement(tmp[1]);
+		whereElement = new WhereElement(tmp[2]);
+		groupByElement = new GroupByElement(tmp[3]);
+		suchThatElement = new SuchThatElement(tmp[4]);
+		havingElement = new HavingElement(tmp[5]);
 	}
 
 	/**

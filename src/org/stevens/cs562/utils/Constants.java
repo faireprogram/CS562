@@ -43,5 +43,34 @@ public class Constants {
 	 */
 	public static String KEY_WORD_HAVING ="HAVING";
 	
+	/**
+	 * ERROR_SYNTAX_SELECT
+	 */
+	public static int ERROR_SYNTAX_SELECT = 0;
+	
+	/**
+	 * ERROR_SYNTAX_FROM
+	 */
+	public static int ERROR_SYNTAX_FROM = 1;
+	
+	/**
+	 * ERROR_SYNTAX_WHERE
+	 */
+	public static int ERROR_SYNTAX_WHERE = 2;
+	
+	/**
+	 * ERROR_SYNTAX_GROUP_BY
+	 */
+	public static int ERROR_SYNTAX_GROUP_BY = 3;
+	
+	/**
+	 * ERROR_SYNTAX_SUCHTHAT
+	 */
+	public static int ERROR_SYNTAX_SUCHTHAT = 4;
+	
+	/**
+	 * ERROR_SYNTAX_Having
+	 */
+	public static int ERROR_SYNTAX_Having = 5;
 	
 }
