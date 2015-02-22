@@ -3,8 +3,6 @@ package org.stevens.cs562.utils.test;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.stevens.cs562.utils.SQLStringParsers;
 
@@ -14,7 +12,7 @@ public class Test {
 	
 	private static String readLine(String format) throws IOException {
 	    
-	    System.out.print(String.format(format));
+	    System.out.print(String.format(format, null));
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(
 	            System.in));
 	    return reader.readLine();
