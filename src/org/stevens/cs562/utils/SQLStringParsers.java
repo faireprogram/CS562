@@ -5,19 +5,30 @@ import java.util.regex.Pattern;
 
 public class SQLStringParsers {
 
-	public static String s = "the SELECT ty ,zy,  xz,th from sales C, sales D where C.X='1';";
+	
+	public static String s = " SELECT ty ,zy,  xz,th "
+			+ "from sales C, sales D "
+			+ "where C.X='1' "
+			+ "group by C.X, D.Y : X, Y "
+			+ "suchthat X.start_date < '192/1687/200  and Y.start_data > '899222' "
+			+ "having count(X.startdate) > 5 ;";
+			
 	
 	/**
 	 * 
 	 */
 	public static boolean parseString() {
-		Pattern p = Pattern.compile("\\s*select\\s+(?<selectcause>.+)\\s+from\\s+(?<fromcause>.+)\\s+where\\s(?<wherecause>.+)\\s*;", Pattern.CASE_INSENSITIVE);
+		Pattern p = Pattern.compile(Constants.SQL_REGULAR_EXPRESSION, Pattern.CASE_INSENSITIVE);
+		//Pattern p = Pattern.compile("\\s*select\\s+(?<selectcause>.+)\\s+from\\s+(?<fromcause>.+)\\s+where\\s(?<wherecause>.+)\\s*(group\\s+by\\s+(?<groupby>.+)\\s+(suchthat\\s+(?<suchthat>.+)\\s+)?)?[^;]+;", Pattern.CASE_INSENSITIVE);
 		Matcher matchers = p.matcher(s);
 		while(matchers.find()) {
 			System.out.println("I found the text");
 			System.out.println(matchers.group("selectcause"));
 			System.out.println(matchers.group("fromcause"));
 			System.out.println(matchers.group("wherecause"));
+			System.out.println(matchers.group("groupby"));
+			System.out.println(matchers.group("suchthat"));
+			System.out.println(matchers.group("having"));
 			matchers.group();
 			matchers.start();
 			matchers.end();
