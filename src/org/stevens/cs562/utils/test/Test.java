@@ -28,7 +28,7 @@ public class Test {
 	public static void main(String [ ] args) throws IOException {
 //		RelationalAnalysis rs = new RelationalAnalysis();
 		SqlSentence ss = new SqlSentence(Test.s);
-		System.out.println("Hello World2111") ; 
+		System.out.println("Hello World211d") ; 
 		
 		
 //        while (true) {
