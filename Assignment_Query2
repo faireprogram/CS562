@@ -1,0 +1,528 @@
+package Programming_Exercise;
+import java.sql.*;
+
+/*
+ * Author: Zejie Ding
+ * CWID: 10394744
+ * How to test my code on postgres server
+ * 1. Upload all my .java files to server
+ * 
+ * 2. Before you run my file, please remember to export the jdbc driver
+ * Like this: export CLASSPATH=/home/zding6/java/postgresql-9.2-1003.jdbc4.jar:.
+ *  
+ * and change the username, pwd and url to yours in my code.
+ * 
+ * 3. There is a class file named sale_rec_ind.java that will be used in all
+ * queries. Make sure you compile this class file along with two queries files
+ * Like this: 
+* zding6@postgres:~/java$ javac -d . Assignment2_Query1.java sale_rec_ind.java
+* zding6@postgres:~/java$ javac -d . Assignment2_Query2.java sale_rec_ind.java
+* zding6@postgres:~/java$ javac -d . Assignment2_Query3.java sale_rec_ind.java
+ * 
+ * 4. Please notice that my java files are under the default package
+ * You can test my code like this:
+ * zding6@postgres:~/java$ Assignment_Query1
+ * zding6@postgres:~/java$ Assignment_Query2
+*/
+
+public class Assignment_Query2 {
+	public static void main(String[] args) 
+	{
+		int count=0;   //count number
+		int flag;      //indicator for the(cname & pname) combination
+		sale_rec_ind [] sri= new sale_rec_ind[500];  //sale record indicator
+		for(int i=0; i<500; i++)
+		{
+			sri[i] = new sale_rec_ind();
+		}
+		//this is for database connection
+		String usr ="postgres";
+		String pwd ="19930920";
+		String url ="jdbc:postgresql://localhost:5432/postgres";
+		
+		//try to capture the exception if you are not connecting to database
+		try 
+		{
+			Class.forName("org.postgresql.Driver");
+		} 
+
+		catch(Exception e) 
+		{
+			System.out.println("Fail loading Driver!");
+			e.printStackTrace();
+		}
+		
+		//----------------------------------------------------------------------
+		// PRINT TITLE OF THE RESULT
+		//----------------------------------------------------------------------
+		System.out.printf("PRODUCT   Month       Count    \n");
+		System.out.printf("=======  ======  ==========    \n");
+		
+		try 
+		{
+			//build the connection  and execute the sql statement
+			Connection conn = DriverManager.getConnection(url, usr, pwd); 
+
+			Statement stmt = conn.createStatement(); 
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Sales");
+			
+			while (rs.next()) //you need to read every line of the database
+			{
+				if(rs.getRow() ==0) // you are reaching the first row
+				{
+					if(rs.getShort("month") == 1 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy
+						sri[0].month = rs.getShort("month");
+						sri[0].m1_sum = rs.getDouble("quant");
+						sri[0].m1_amount = 1;
+						count++;
+					}
+				
+					else if(rs.getShort("month") == 2 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy             	
+						sri[0].month = rs.getShort("month");
+						sri[0].m2_sum = rs.getDouble("quant");
+						sri[0].m2_amount = 1;
+						count++;
+					}
+					
+					else if(rs.getShort("month") == 3 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy             	
+						sri[0].month = rs.getShort("month");
+						sri[0].m3_sum = rs.getDouble("quant");
+						sri[0].m3_amount = 1;
+						count++;
+					}
+					
+					else if(rs.getShort("month") == 4 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy             	
+						sri[0].month = rs.getShort("month");
+						sri[0].m4_sum = rs.getDouble("quant");
+						sri[0].m4_amount = 1;
+						count++;
+					}
+					
+					else if(rs.getShort("month") == 5 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy             	
+						sri[0].month = rs.getShort("month");
+						sri[0].m5_sum = rs.getDouble("quant");
+						sri[0].m5_amount = 1;
+						count++;
+					}
+					
+					else if(rs.getShort("month") == 6 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy             	
+						sri[0].month = rs.getShort("month");
+						sri[0].m6_sum = rs.getDouble("quant");
+						sri[0].m6_amount = 1;
+						count++;
+					}
+					
+					else if(rs.getShort("month") == 7 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy             	
+						sri[0].month = rs.getShort("month");
+						sri[0].m7_sum = rs.getDouble("quant");
+						sri[0].m7_amount = 1;
+						count++;
+					}
+					
+					else if(rs.getShort("month") == 8 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy             	
+						sri[0].month = rs.getShort("month");
+						sri[0].m8_sum = rs.getDouble("quant");
+						sri[0].m8_amount = 1;
+						count++;
+					}
+					
+					else if(rs.getShort("month") == 9 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy             	
+						sri[0].month = rs.getShort("month");
+						sri[0].m9_sum = rs.getDouble("quant");
+						sri[0].m9_amount = 1;
+						count++;
+					}
+					
+					else if(rs.getShort("month") == 10 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy             	
+						sri[0].month = rs.getShort("month");
+						sri[0].m10_sum = rs.getDouble("quant");
+						sri[0].m10_amount = 1;
+						count++;
+					}
+					
+					else if(rs.getShort("month") == 11 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy             	
+						sri[0].month = rs.getShort("month");
+						sri[0].m11_sum = rs.getDouble("quant");
+						sri[0].m11_amount = 1;
+						count++;
+					}
+					
+					else if(rs.getShort("month") == 12 && rs.getShort("year")==1997)             //This is for quarter #1
+					{
+						sri[0].pname = rs.getString("prod");            //store product name by string copy             	
+						sri[0].month = rs.getShort("month");
+						sri[0].m12_sum = rs.getDouble("quant");
+						sri[0].m12_amount = 1;
+						count++;
+					}
+					//continue to the next row;
+				}
+				else if(rs.getRow() >0)					//if not first row
+		          {
+		             flag=0;						//initialize the indicator of product, if mark =1, the customer and product exist
+		             int n= 0;
+		             for(n=0; n<count; n++)			//testing the product name with the former rows
+		             {
+						 String pname_temp;   
+						 pname_temp = rs.getString("prod");      //Temporary value for product name
+						 //short m_temp = rs.getShort("month");
+						 if(sri[n].pname.equals(pname_temp)  )     //find the same customer, product and quarter combination name
+		                 {
+							 flag = 1;//if exist, flag=1
+							 if(rs.getShort("month")==1 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m1_sum += rs.getDouble("quant");
+								 sri[n].m1_amount ++;
+							 }
+							 else if(rs.getShort("month") ==2 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m2_sum += rs.getDouble("quant");
+								 sri[n].m2_amount ++;
+							 }
+							 else if(rs.getShort("month") ==3 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m3_sum += rs.getDouble("quant");
+								 sri[n].m3_amount ++;
+							 }
+							 else if(rs.getShort("month") ==4 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m4_sum += rs.getDouble("quant");
+								 sri[n].m4_amount ++;
+							 }
+							 else if(rs.getShort("month") ==5 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m5_sum += rs.getDouble("quant");
+								 sri[n].m5_amount ++;
+							 }
+							 else if(rs.getShort("month") ==6 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m6_sum += rs.getDouble("quant");
+								 sri[n].m6_amount ++;
+							 }
+							 else if(rs.getShort("month") ==7 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m7_sum += rs.getDouble("quant");
+								 sri[n].m7_amount ++;
+							 }
+							 else if(rs.getShort("month") ==8 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m8_sum += rs.getDouble("quant");
+								 sri[n].m8_amount ++;
+							 }
+							 else if(rs.getShort("month") ==9 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m9_sum += rs.getDouble("quant");
+								 sri[n].m9_amount ++;
+							 }
+							 else if(rs.getShort("month") ==10 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m10_sum += rs.getDouble("quant");
+								 sri[n].m10_amount ++;
+							 }
+							 else if(rs.getShort("month") ==11 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m11_sum += rs.getDouble("quant");
+								 sri[n].m11_amount ++;
+							 }
+							 else if(rs.getShort("month") ==12 && rs.getShort("year")==1997)
+							 {
+								 sri[n].m12_sum += rs.getDouble("quant");
+								 sri[n].m12_amount ++;
+							 }
+		                 }
+		               }
+		             if(flag == 0)                                                 //if customer, product and quarter combination name not exist 
+	           		 {     														   //we need to add a new row of customer name & product name 
+		            	 if(rs.getShort("month") == 1)             
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy                 
+								sri[count].month = 1;
+								sri[count].m1_sum = rs.getDouble("quant");
+								sri[count].m1_amount=1;                           //amount = row number =1
+								count++;
+							}
+		            	 
+		            	 else if(rs.getShort("month") == 2)              //This is for quarter #2
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy             
+								sri[count].month = 2;
+								sri[count].m2_sum = rs.getDouble("quant");
+								sri[count].m2_amount=1;
+								count++;
+							}
+							
+		            	 else if(rs.getShort("month") == 3)              //This is for quarter #2
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy             
+								sri[count].month = 3;
+								sri[count].m3_sum = rs.getDouble("quant");
+								sri[count].m3_amount=1;
+								count++;
+							}
+							
+		            	 else if(rs.getShort("month") == 4)              //This is for quarter #2
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy             
+								sri[count].month = 4;
+								sri[count].m4_sum = rs.getDouble("quant");
+								sri[count].m4_amount=1;
+								count++;
+							}
+							
+		            	 else if(rs.getShort("month") == 5)              //This is for quarter #2
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy             
+								sri[count].month = 5;
+								sri[count].m5_sum = rs.getDouble("quant");
+								sri[count].m5_amount=1;
+								count++;
+							}
+							
+		            	 else if(rs.getShort("month") == 6)              //This is for quarter #2
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy             
+								sri[count].month = 6;
+								sri[count].m6_sum = rs.getDouble("quant");
+								sri[count].m6_amount=1;
+								count++;
+							}
+							
+		            	 else if(rs.getShort("month") == 7)              //This is for quarter #2
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy             
+								sri[count].month = 7;
+								sri[count].m7_sum = rs.getDouble("quant");
+								sri[count].m7_amount=1;
+								count++;
+							}
+							
+		            	 else if(rs.getShort("month") == 8)              //This is for quarter #2
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy             
+								sri[count].month = 8;
+								sri[count].m8_sum = rs.getDouble("quant");
+								sri[count].m8_amount=1;
+								count++;
+							}
+							
+		            	 else if(rs.getShort("month") == 9)              //This is for quarter #2
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy             
+								sri[count].month = 9;
+								sri[count].m9_sum = rs.getDouble("quant");
+								sri[count].m9_amount=1;
+								count++;
+							}
+							
+		            	 else if(rs.getShort("month") == 10)              //This is for quarter #2
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy             
+								sri[count].month = 10;
+								sri[count].m10_sum = rs.getDouble("quant");
+								sri[count].m10_amount=1;
+								count++;
+							}
+							
+		            	 else if(rs.getShort("month") == 11)              //This is for quarter #2
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy             
+								sri[count].month = 11;
+								sri[count].m11_sum = rs.getDouble("quant");
+								sri[count].m11_amount=1;
+								count++;
+							}
+							
+		            	 else if(rs.getShort("month") == 12)              //This is for quarter #2
+							{
+								sri[count].pname = rs.getString("prod");            //store product name by string copy             
+								sri[count].month = 12;
+								sri[count].m12_sum = rs.getDouble("quant");
+								sri[count].m12_amount=1;
+								count++;
+							}
+							//continue to the next row;                
+	          		  }
+		            }
+			} // this is the end of while
+			int t;
+			for(t = 0; t < count; t++)
+			{
+				sri[t].m1_avg = sri[t].m1_sum / sri[t].m1_amount;     //avg = sum/amount
+				sri[t].m2_avg = sri[t].m2_sum / sri[t].m2_amount;
+				sri[t].m3_avg = sri[t].m3_sum/ sri[t].m3_amount;
+				sri[t].m4_avg = sri[t].m4_sum / sri[t].m4_amount;     //avg = sum/amount
+				sri[t].m5_avg = sri[t].m5_sum / sri[t].m5_amount;
+				sri[t].m6_avg = sri[t].m6_sum/ sri[t].m6_amount;
+				sri[t].m7_avg = sri[t].m7_sum / sri[t].m7_amount;     //avg = sum/amount
+				sri[t].m8_avg = sri[t].m8_sum / sri[t].m8_amount;
+				sri[t].m9_avg = sri[t].m9_sum/ sri[t].m9_amount;
+				sri[t].m10_avg = sri[t].m10_sum / sri[t].m10_amount;     //avg = sum/amount
+				sri[t].m11_avg = sri[t].m11_sum / sri[t].m11_amount;
+				sri[t].m12_avg = sri[t].m12_sum/ sri[t].m12_amount;
+			}
+			ResultSet rs2 = stmt.executeQuery("SELECT * FROM Sales");
+			while(rs2.next())
+			{
+				for(int i=0; i<count; i++)
+				{
+					if(rs2.getShort("month")==1 && rs2.getString("prod").equals(sri[i].pname)
+							&& sri[i].month ==2 && rs2.getDouble("quant")>= 1.25* sri[i].m2_avg)
+					{
+						sri[i].m1_c++;
+					}
+					else if(rs2.getShort("month")==2 && rs2.getString("prod").equals(sri[i].pname)
+							&& (sri[i].month ==1||sri[i].month ==3) && 
+							(rs2.getDouble("quant")>= 1.25* sri[i].m1_avg ||rs2.getDouble("quant")>= 1.25* sri[i].m3_avg))
+					{
+						sri[i].m2_c++;
+					}
+					else if(rs2.getShort("month")==3 && rs2.getString("prod").equals(sri[i].pname)
+							&& (sri[i].month ==2||sri[i].month ==4) && 
+							(rs2.getDouble("quant")>= 1.25* sri[i].m2_avg ||rs2.getDouble("quant")>= 1.25* sri[i].m4_avg))
+					{
+						sri[i].m3_c++;
+					}
+					else if(rs2.getShort("month")==4 && rs2.getString("prod").equals(sri[i].pname)
+							&& (sri[i].month ==3||sri[i].month ==5) && 
+							(rs2.getDouble("quant")>= 1.25* sri[i].m3_avg ||rs2.getDouble("quant")>= 1.25* sri[i].m5_avg))
+					{
+						sri[i].m4_c++;
+					}
+					else if(rs2.getShort("month")==5 && rs2.getString("prod").equals(sri[i].pname)
+							&& (sri[i].month ==4||sri[i].month ==6) && 
+							(rs2.getDouble("quant")>= 1.25* sri[i].m4_avg ||rs2.getDouble("quant")>= 1.25* sri[i].m6_avg))
+					{
+						sri[i].m5_c++;
+					}
+					else if(rs2.getShort("month")==6 && rs2.getString("prod").equals(sri[i].pname)
+							&& (sri[i].month ==5||sri[i].month ==7) && 
+							(rs2.getDouble("quant")>= 1.25* sri[i].m5_avg ||rs2.getDouble("quant")>= 1.25* sri[i].m7_avg))
+					{
+						sri[i].m6_c++;
+					}
+					else if(rs2.getShort("month")==7 && rs2.getString("prod").equals(sri[i].pname)
+							&& (sri[i].month ==6||sri[i].month ==8) && 
+							(rs2.getDouble("quant")>= 1.25* sri[i].m6_avg ||rs2.getDouble("quant")>= 1.25* sri[i].m8_avg))
+					{
+						sri[i].m7_c++;
+					}
+					else if(rs2.getShort("month")==8 && rs2.getString("prod").equals(sri[i].pname)
+							&& (sri[i].month ==7||sri[i].month ==9) && 
+							(rs2.getDouble("quant")>= 1.25* sri[i].m7_avg ||rs2.getDouble("quant")>= 1.25* sri[i].m9_avg))
+					{
+						sri[i].m8_c++;
+					}
+					else if(rs2.getShort("month")==9 && rs2.getString("prod").equals(sri[i].pname)
+							&& (sri[i].month ==8||sri[i].month ==10) && 
+							(rs2.getDouble("quant")>= 1.25* sri[i].m8_avg ||rs2.getDouble("quant")>= 1.25* sri[i].m10_avg))
+					{
+						sri[i].m9_c++;
+					}
+					else if(rs2.getShort("month")==10 && rs2.getString("prod").equals(sri[i].pname)
+							&& (sri[i].month ==9||sri[i].month ==11) && 
+							(rs2.getDouble("quant")>= 1.25* sri[i].m9_avg ||rs2.getDouble("quant")>= 1.25* sri[i].m11_avg))
+					{
+						sri[i].m10_c++;
+					}
+					else if(rs2.getShort("month")==11 && rs2.getString("prod").equals(sri[i].pname)
+							&& (sri[i].month ==10||sri[i].month ==12) && 
+							(rs2.getDouble("quant")>= 1.25* sri[i].m10_avg ||rs2.getDouble("quant")>= 1.25* sri[i].m12_avg))
+					{
+						sri[i].m11_c++;
+					}
+					else if(rs2.getShort("month")==12 && rs2.getString("prod").equals(sri[i].pname)
+							&& sri[i].month ==11 && 
+							rs2.getDouble("quant")>= 1.25* sri[i].m11_avg )
+					{
+						sri[i].m12_c++;
+					}
+				}
+			}
+			
+			for(int a = 0; a < count; a++)
+			{
+				for(int b=1; b <= 12; b++)
+				{
+					System.out.printf("%-7s  ",sri[a].pname);   // Product
+					System.out.printf("    %2d   ",b); //Month
+					if(b==1)
+					{
+						System.out.printf("        %d\n",sri[a].m1_c);
+					}
+					else if (b==2)
+					{
+						System.out.printf("        %d\n",sri[a].m2_c);
+					}
+					else if (b==3)
+					{
+						System.out.printf("        %d\n",sri[a].m3_c);
+					}
+					else if (b==4)
+					{
+						System.out.printf("        %d\n",sri[a].m4_c);
+					}
+					else if (b==5)
+					{
+						System.out.printf("        %d\n",sri[a].m5_c);
+					}
+					else if (b==6)
+					{
+						System.out.printf("        %d\n",sri[a].m6_c);
+					}
+					else if (b==7)
+					{
+						System.out.printf("        %d\n",sri[a].m7_c);
+					}
+					else if (b==8)
+					{
+						System.out.printf("        %d\n",sri[a].m8_c);
+					}
+					else if (b==9)
+					{
+						System.out.printf("        %d\n",sri[a].m9_c);
+					}
+					else if (b==10)
+					{
+						System.out.printf("        %d\n",sri[a].m10_c);
+					}
+					else if (b==11)
+					{
+						System.out.printf("        %d\n",sri[a].m11_c);
+					}
+					else if (b==12)
+					{
+						System.out.printf("        %d\n",sri[a].m12_c);
+					}
+				}
+			}
+		} 
+		catch(SQLException e) 
+		{
+			System.out.println("Connection URL or username or password errors!");
+			e.printStackTrace();
+		}
+	}
+}
+
