@@ -2,7 +2,9 @@ package org.stevens.cs562.sql.sqlimpl;
 
 import org.stevens.cs562.sql.AbstractExpression;
 import org.stevens.cs562.sql.ComparisonAndComputeOperator;
+import org.stevens.cs562.sql.Expression;
 import org.stevens.cs562.sql.Variable;
+import org.stevens.cs562.sql.visit.Visitor;
 
 /**
  * ConditionExpression
@@ -19,12 +21,43 @@ public class ComparisonAndComputeExpression extends AbstractExpression{
 	/**
 	 * left
 	 */
-	private Variable left;
+	private Expression left;
 	
 	/**
 	 * right
 	 */
-	private Variable right;
+	private Expression right;
+
+	public ComparisonAndComputeExpression(
+			ComparisonAndComputeOperator operator, Expression left,
+			Expression right) {
+		super();
+		this.operator = operator;
+		this.left = left;
+		this.right = right;
+	}
+
+	
+	/**
+	 * @return the operator
+	 */
+	public ComparisonAndComputeOperator getOperator() {
+		return operator;
+	}
+
+	/**
+	 * @return the left
+	 */
+	public Expression getLeft() {
+		return left;
+	}
+
+	/**
+	 * @return the right
+	 */
+	public Expression getRight() {
+		return right;
+	}
 	
 	
 }

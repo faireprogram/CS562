@@ -1,5 +1,7 @@
 package org.stevens.cs562.sql;
 
+import org.stevens.cs562.sql.visit.Visitor;
+
 /**
  * @author faire_000
  *
@@ -20,4 +22,12 @@ public abstract class AbstractExpression  implements Expression{
 		// TODO Auto-generated method stub
 		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.stevens.cs562.sql.visit.Visit#accept(org.stevens.cs562.sql.visit.Visitor)
+	 */
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
+	}
+	
 }

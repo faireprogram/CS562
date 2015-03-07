@@ -3,6 +3,7 @@ package org.stevens.cs562.sql.sqlimpl;
 import org.stevens.cs562.sql.AbstractExpression;
 import org.stevens.cs562.sql.AggregateOperator;
 import org.stevens.cs562.sql.Variable;
+import org.stevens.cs562.sql.visit.Visitor;
 
 /**
  * @author faire_000
@@ -52,6 +53,22 @@ public class AggregateExpression extends AbstractExpression{
 	 */
 	public void setAttributes(Variable attributes) {
 		this.attributes = attributes;
+	}
+
+	public void visit() {
+		
+	}
+
+	public void accept(Visitor visitor) {
+		visitor.visit(this);
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+			return this.operator.getName() + "(" + this.attributes.getBelong().getName() + "." + this.attributes.getName() + ")";
 	}
 	
 	

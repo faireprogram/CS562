@@ -15,6 +15,13 @@ public class GroupingVaribale extends AbstractVariable{
 	 * attributes
 	 */
 	private Collection<? extends Variable> attributes;
+	
+	
+
+	public GroupingVaribale(String variable_name) {
+		super();
+		this.variable_name = variable_name;
+	}
 
 	public Variable getBelong() {
 		return null;
@@ -23,4 +30,5 @@ public class GroupingVaribale extends AbstractVariable{
 	public Collection<? extends Variable> getContain() {
 		return attributes;
 	}
+
 }
