@@ -1,5 +1,7 @@
 package org.stevens.cs562.sql;
 
+import java.util.Collection;
+
 public interface Variable {
 
 	/**
@@ -11,4 +13,14 @@ public interface Variable {
 	 * @return
 	 */
 	Boolean hasAlias();
+	
+	/**
+	 * @return
+	 */
+	Variable getBelong();
+	
+	/**
+	 * @return
+	 */
+	Collection<? extends Variable> getContain();
 }

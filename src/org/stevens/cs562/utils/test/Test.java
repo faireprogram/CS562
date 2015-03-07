@@ -32,11 +32,10 @@ public class Test {
 	    return reader.readLine();
 	}
 	
-	public static void main(String [ ] args) throws IOException {
-//		RelationalAnalysis rs = new RelationalAnalysis();
-//		SqlSentence ss = new SqlSentence(Test.s);
-//		System.out.println("Hello World211d") ; 
-		
+	/**
+	 * 
+	 */
+	private static void test_topological_sort() {
 		AdjacentList<Integer, AdjacentNode<Integer>> list = new AdjacentList<Integer, AdjacentNode<Integer>>();
 		AdjacentNode<Integer> A = new AdjacentNodeImpl<Integer>(null,1);
 		AdjacentNode<Integer> B = new AdjacentNodeImpl<Integer>(null,2);
@@ -63,6 +62,13 @@ public class Test {
 		TopologicalGraph<Integer> graph = new TopologicalGraph<Integer>(list);
 		List<Collection<AdjacentNode<Integer>>> layers = graph.sort();
 		System.out.println(layers.size());
+	}
+	public static void main(String [ ] args) throws IOException {
+//		RelationalAnalysis rs = new RelationalAnalysis();
+//		SqlSentence ss = new SqlSentence(Test.s);
+//		System.out.println("Hello World211d") ; 
+		
+		
 
 	}
 }
