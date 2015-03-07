@@ -28,6 +28,10 @@ public class AdjacentList<K, T extends AdjacentNode<K>>  extends AbstractList<T>
 		return findNode(index);
 	}
 
+	public AdjacentNode<K> get(K node) {
+		return findNode(node);
+	}
+	
 	@Override
 	public int size() {		
 		return (length + 1);
@@ -64,6 +68,17 @@ public class AdjacentList<K, T extends AdjacentNode<K>>  extends AbstractList<T>
 		}
 		length = length -1;
 		return removenode;
+	}
+	
+	private AdjacentNode<K> findNode(K node) {
+		AdjacentNode<K> tmp = head;
+		while(tmp != null) {
+			if(tmp.getValue().equals(node)) {
+				break;
+			}
+			tmp = tmp.getNextInDegree();
+		}
+		return tmp;
 	}
 
 	@SuppressWarnings("unchecked")

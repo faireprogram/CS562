@@ -4,8 +4,8 @@ import org.stevens.cs562.sql.AbstractSqlElement;
 
 public class WhereElement extends AbstractSqlElement{
 
-	public WhereElement(String elementSql) {
-		super(elementSql);
+	public WhereElement(String elementSql, SqlSentence sentence) {
+		super(elementSql, sentence);
 		// TODO Auto-generated constructor stub
 	}
 	

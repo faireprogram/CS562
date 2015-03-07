@@ -21,7 +21,7 @@ public class SimpleExpression extends AbstractExpression{
 	/**
 	 * @return the attribute
 	 */
-	public Variable getAttribute() {
+	public Variable getVariable() {
 		return attribute;
 	}
 	

@@ -44,14 +44,14 @@ public class AggregateExpression extends AbstractExpression{
 	/**
 	 * @return the attributes
 	 */
-	public Variable getAttributes() {
+	public Variable getVariable() {
 		return attributes;
 	}
 
 	/**
 	 * @param attributes the attributes to set
 	 */
-	public void setAttributes(Variable attributes) {
+	public void setVariable(Variable attributes) {
 		this.attributes = attributes;
 	}
 

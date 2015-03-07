@@ -6,8 +6,8 @@ public class SelectElement extends AbstractSqlElement {
 	
 	private String parseString = "";
 
-	public SelectElement(String elementSql) {
-		super(elementSql);
+	public SelectElement(String elementSql, SqlSentence sentence) {
+		super(elementSql, sentence);
 		
 		
 	}

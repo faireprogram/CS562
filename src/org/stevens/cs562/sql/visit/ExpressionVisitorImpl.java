@@ -39,7 +39,7 @@ public class ExpressionVisitorImpl extends AbstractVisitor{
 		 */
 		@Override
 		public void visit(SimpleExpression expression) {
-			leftVariables.add(expression.getAttribute());
+			leftVariables.add(expression.getVariable());
 		}
 
 		/* (non-Javadoc)
@@ -55,7 +55,7 @@ public class ExpressionVisitorImpl extends AbstractVisitor{
 		 */
 		@Override
 		public void visit(AggregateExpression expression) {
-			leftVariables.add(expression.getAttributes());
+			leftVariables.add(expression.getVariable());
 		}
 		
 	}
@@ -71,7 +71,7 @@ public class ExpressionVisitorImpl extends AbstractVisitor{
 		 */
 		@Override
 		public void visit(SimpleExpression expression) {
-			rightVariables.add(expression.getAttribute());
+			rightVariables.add(expression.getVariable());
 		}
 
 		/* (non-Javadoc)
@@ -87,7 +87,7 @@ public class ExpressionVisitorImpl extends AbstractVisitor{
 		 */
 		@Override
 		public void visit(AggregateExpression expression) {
-			rightVariables.add(expression.getAttributes());
+			rightVariables.add(expression.getVariable());
 		}
 		
 	}

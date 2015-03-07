@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.stevens.cs562.sql.sqlimpl.NullVariable;
 import org.stevens.cs562.sql.visit.Visitor;
+import org.stevens.cs562.utils.StringBuilder;
 
 
 /**
@@ -80,6 +81,20 @@ public abstract class AbstractVariable implements Variable{
 		}
 		return  getName();
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		Variable v = (Variable) obj;
+		if(StringBuilder.isEqual(this.getName(), v.getName())) {
+			return true;
+		}
+		return false;
+	}
+	
+	
 	
 	
 }

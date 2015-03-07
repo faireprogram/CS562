@@ -38,12 +38,12 @@ public class SqlSentence {
 
 	public SqlSentence(String sql) {
 		String[] tmp = SQLStringParsers.parseString(sql);
-		selectElement = new SelectElement(tmp[0]);
-		fromElement = new FromElement(tmp[1]);
-		whereElement = new WhereElement(tmp[2]);
-		groupByElement = new GroupByElement(tmp[3]);
-		suchThatElement = new SuchThatElement(tmp[4]);
-		havingElement = new HavingElement(tmp[5]);
+		selectElement = new SelectElement(tmp[0], this);
+		fromElement = new FromElement(tmp[1], this);
+		whereElement = new WhereElement(tmp[2], this);
+		groupByElement = new GroupByElement(tmp[3], this);
+		suchThatElement = new SuchThatElement(tmp[4], this);
+		havingElement = new HavingElement(tmp[5], this);
 	}
 
 	/**

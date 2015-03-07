@@ -8,5 +8,7 @@ public interface Expression extends Visit{
 	 * caculate
 	 */
 	void caculate();
+	
+	Variable getVariable();
 
 }

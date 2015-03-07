@@ -28,8 +28,8 @@ public class SuchThatElement extends AbstractSqlElement{
 //	private List<>
 	
 //	private Collection
-	public SuchThatElement(String elementSql) {
-		super(elementSql);
+	public SuchThatElement(String elementSql, SqlSentence sentence) {
+		super(elementSql, sentence);
 	}
 
 	/* (non-Javadoc)
@@ -37,7 +37,7 @@ public class SuchThatElement extends AbstractSqlElement{
 	 */
 	@Override
 	protected void convert(String elementSql) {
-		
+
 		// X.sales > Min(Y.sales)
 		
 		GroupingVaribale x_gp = new GroupingVaribale("X");
@@ -52,9 +52,26 @@ public class SuchThatElement extends AbstractSqlElement{
 		//X.sales > Min(Y.sales)
 		Expression x_sales_gt_y_min_sales = new ComparisonAndComputeExpression(ComparisonAndComputeOperator.GREATER,new SimpleExpression(attr_sales_x), y_sales_average);
 		
-		this.such_that_expressions.add(x_sales_gt_y_min_sales);
+		this.getSuch_that_expressions().add(x_sales_gt_y_min_sales);
 		
 		
+	}
+
+	/**
+	 * @return the such_that_expressions
+	 */
+	public List<Expression> getSuch_that_expressions() {
+		if(such_that_expressions == null) {
+			return new ArrayList<Expression>();
+		} 
+		return such_that_expressions;
+	}
+
+	/**
+	 * @param such_that_expressions the such_that_expressions to set
+	 */
+	public void setSuch_that_expressions(List<Expression> such_that_expressions) {
+		this.such_that_expressions = such_that_expressions;
 	}
 	
 	

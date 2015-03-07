@@ -2,19 +2,21 @@ package org.stevens.cs562.sql.sqlimpl;
 
 import org.stevens.cs562.sql.AbstractVariable;
 
-public class ConstantVariable extends AbstractVariable{
+//Generic T belongs to prototype of the JAVA
+//String, Integer, Number
+public class ConstantVariable<T> extends AbstractVariable{
 
 	/**
 	 * Integer
 	 */
-	private Integer value;
+	private T value;
 	
 	
 
 	/**
 	 * @param value
 	 */
-	public ConstantVariable(Integer value) {
+	public ConstantVariable(T value) {
 		super();
 		this.value = value;
 	}
@@ -22,14 +24,14 @@ public class ConstantVariable extends AbstractVariable{
 	/**
 	 * @return the value
 	 */
-	public Integer getValue() {
+	public T getValue() {
 		return value;
 	}
 
 	/**
 	 * @param value the value to set
 	 */
-	public void setValue(Integer value) {
+	public void setValue(T value) {
 		this.value = value;
 	}
 	

@@ -1,13 +1,36 @@
 package org.stevens.cs562.sql;
 
+import org.stevens.cs562.sql.sqlimpl.SqlSentence;
+
 public abstract class AbstractSqlElement implements SqlElement{
 
-	public AbstractSqlElement(String elementSql) {
+	/**
+	 * selfSentce
+	 */
+	private SqlSentence selfSentce;
+	
+	public AbstractSqlElement(String elementSql, SqlSentence selfSentce) {
+		this.selfSentce = selfSentce;
 		convert(elementSql);
 	}
 	
 	protected void convert(String elementSql) {
 		//TO DO
 	}
+
+	/**
+	 * @return the selfSentce
+	 */
+	public SqlSentence getSelfSentce() {
+		return selfSentce;
+	}
+
+	/**
+	 * @param selfSentce the selfSentce to set
+	 */
+	public void setSelfSentce(SqlSentence selfSentce) {
+		this.selfSentce = selfSentce;
+	}
+	
 	
 }
