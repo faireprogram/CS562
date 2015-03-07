@@ -3,8 +3,6 @@ package org.stevens.cs562.sql.sqlimpl;
 import org.stevens.cs562.sql.AbstractExpression;
 import org.stevens.cs562.sql.ComparisonAndComputeOperator;
 import org.stevens.cs562.sql.Expression;
-import org.stevens.cs562.sql.Variable;
-import org.stevens.cs562.sql.visit.Visitor;
 
 /**
  * ConditionExpression
