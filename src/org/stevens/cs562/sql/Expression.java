@@ -10,5 +10,10 @@ public interface Expression extends Visit{
 	void caculate();
 	
 	Variable getVariable();
+	
+	/**
+	 * @return
+	 */
+	String getConvertionName();
 
 }

@@ -5,7 +5,7 @@ package org.stevens.cs562.sql;
  *
  */
 public enum AggregateOperator {
-	MAX("MAX"),MIN("MIN"),COUNT("COUNT"),AVERAGE("AVERAGE"),SUM("SUM");
+	MAX("MAX"),MIN("MIN"),COUNT("COUNT"),AVERAGE("AVG"),SUM("SUM");
 	
 	private String name;
 	private AggregateOperator(String name) {
@@ -14,6 +14,12 @@ public enum AggregateOperator {
 	public String getName() {
 		return name;
 	}
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Enum#toString()
+	 */
+	@Override
+	public String toString() {
+		return name;
+	}
 	
 }

@@ -73,4 +73,25 @@ public class Constants {
 	 */
 	public static int ERROR_SYNTAX_Having = 5;
 	
+	/**
+	 * GENERATE_CODE_MF_TABLE
+	 */
+	public static String GENERATE_CODE_MF_TABLE = "MFtable";
+	
+	/**
+	 * GENERATE_CODE_MF_MAIN
+	 */
+	public static String GENERATE_CODE_MF_MAIN = "MFmain";
+	
+	/**
+	 * SEARCHING_TYPE
+	 */
+	public static String SEARCHING_TYPE ="select data_type, character_maximum_length from information_schema.columns where table_name = %s and column_name = %s ;";
+	
+	public static String STRING_TYPE = "String";
+	
+	public static String INTERGER_TYPE = "int";
+	
+	public static String OUT_PUT_PATH = "D:\\Project\\Java\\CS562\\Test\\src\\";
+	
 }

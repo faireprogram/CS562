@@ -1,13 +1,12 @@
 package org.stevens.cs562.utils.test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 
+import org.stevens.cs562.code.CodeGenerator;
 import org.stevens.cs562.sql.AggregateOperator;
 import org.stevens.cs562.sql.ComparisonAndComputeOperator;
 import org.stevens.cs562.sql.Expression;
@@ -17,20 +16,17 @@ import org.stevens.cs562.sql.sqlimpl.AttributeVariable;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
 import org.stevens.cs562.sql.sqlimpl.GroupByElement;
 import org.stevens.cs562.sql.sqlimpl.GroupingVaribale;
+import org.stevens.cs562.sql.sqlimpl.NullVariable;
+import org.stevens.cs562.sql.sqlimpl.SelectElement;
 import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
 import org.stevens.cs562.sql.sqlimpl.SqlSentence;
 import org.stevens.cs562.sql.sqlimpl.SuchThatElement;
 import org.stevens.cs562.sql.visit.AggregateExpressionVisitorImpl;
 import org.stevens.cs562.sql.visit.RelationBuilder;
 import org.stevens.cs562.sql.visit.RelationBuilderVisitor;
-import org.stevens.cs562.sql.visit.Visitor;
-import org.stevens.cs562.utils.graph.AdjacentList;
-import org.stevens.cs562.utils.graph.AdjacentNode;
-import org.stevens.cs562.utils.graph.AdjacentNodeImpl;
-import org.stevens.cs562.utils.graph.TopologicalGraph;
+import org.stevens.cs562.utils.DynamicCompiler;
 
-public class Test {
-	
+public class TestGenerator {
 	
 	public static String s = " SELECT ty ,zy,  xz,th "
 			+ "from sales C, sales D "
@@ -39,52 +35,7 @@ public class Test {
 			+ "suchthat X.start_date < '192/1687/200  and Y.start_data > '899222' "
 			+ "having count(X.startdate) > 5 ;";
 	
-	private static String readLine(String format) throws IOException {
-	    
-	    System.out.print(String.format(format, null));
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(
-	            System.in));
-	    return reader.readLine();
-	}
-	
-	/**
-	 * 
-	 */
-	private static void test_topological_sort() {
-		AdjacentList<Integer, AdjacentNode<Integer>> list = new AdjacentList<Integer, AdjacentNode<Integer>>();
-		AdjacentNode<Integer> A = new AdjacentNodeImpl<Integer>(null,1);
-		AdjacentNode<Integer> B = new AdjacentNodeImpl<Integer>(null,2);
-		AdjacentNode<Integer> C = new AdjacentNodeImpl<Integer>(null,3);
-		AdjacentNode<Integer> D = new AdjacentNodeImpl<Integer>(null,4);
-		Collection<AdjacentNode<Integer>> ARelation = new ArrayList<AdjacentNode<Integer>>();
-		ARelation.add(B);
-		ARelation.add(C);
-		A.setEdgeVetex(ARelation);
-		B.getEdgeVetex().add(C);
-		C.getEdgeVetex().add(B);
-		list.add(A);
-		list.add(B);
-		list.add(C);
-		list.add(D);
-		
-//		list.get(index)
-		System.out.println(list.get(0).getValue());
-		System.out.println(list.get(1).getValue());
-		System.out.println(list.get(2).getValue());
-		System.out.println(list.get(3).getValue());
-		
-		
-		TopologicalGraph<Integer> graph = new TopologicalGraph<Integer>(list);
-		List<Collection<AdjacentNode<Integer>>> layers = graph.sort();
-		System.out.println(layers.size());
-	}
-	public static void main(String [ ] args) throws IOException {
-//		RelationalAnalysis rs = new RelationalAnalysis();
-//		SqlSentence ss = new SqlSentence(Test.s);
-//		System.out.println("Hello World211d") ; 
-
-		
-		// X.sales > Min(Y.sales)
+	public static void main(String[] strings) throws SQLException {
 		
 		SqlSentence sqlsetence = new SqlSentence(s);
 		GroupByElement gbelement = sqlsetence.getGroupByElement();
@@ -128,5 +79,63 @@ public class Test {
 		RelationBuilder builder = new RelationBuilder(sqlsetence);
 		builder.build();
 		
+		//select X.cust, cust, min(quant)
+		//from ............
+		
+		
+		SelectElement selectElement = sqlsetence.getSelectElement();
+		
+		//CUST
+		AttributeVariable variable  = new AttributeVariable(new NullVariable(), "cust");
+		Expression exp1 = new SimpleExpression(variable);
+		//x.cust
+		AttributeVariable variable2  = new AttributeVariable(new GroupingVaribale("x"), "cust");
+		Expression exp2 = new SimpleExpression(variable2);
+		//min(quant)
+		AttributeVariable variable3  = new AttributeVariable(new NullVariable(), "quant");
+		Expression exp3 = new AggregateExpression(AggregateOperator.MIN, variable3);
+		
+		AttributeVariable variable4  = new AttributeVariable(new GroupingVaribale("Y"), "sales");
+		Expression exp4 = new AggregateExpression(AggregateOperator.AVERAGE, variable4);
+		
+		selectElement.getProjectItems().add(exp1);
+		selectElement.getProjectItems().add(exp2);
+		selectElement.getProjectItems().add(exp3);
+		selectElement.getProjectItems().add(exp4);
+		
+		Connection connection = getConnection();
+		CodeGenerator generate = new CodeGenerator(sqlsetence, connection);
+		generate.generate();
+		connection.close();
+		
+		/*
+		 * dynamic 
+		 */
+//		DynamicCompiler compiler = new DynamicCompiler();
+//		compiler.compileAndRun();
 	}
+	
+	/**
+	 * @return
+	 * @throws SQLException 
+	 */
+	private static Connection getConnection() throws SQLException {
+		String usr ="postgres";
+		String pwd ="zw198787";
+		String url ="jdbc:postgresql://localhost:5432/test";
+		try 
+		{
+			Class.forName("org.postgresql.Driver");
+		} 
+
+		catch(Exception e) 
+		{
+			System.out.println("Fail loading Driver!");
+			e.printStackTrace();
+		}
+		
+		Connection conn = DriverManager.getConnection(url, usr, pwd); 
+		return conn;
+	}
+
 }

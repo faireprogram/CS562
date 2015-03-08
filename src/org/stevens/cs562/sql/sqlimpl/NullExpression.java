@@ -22,4 +22,8 @@ public class NullExpression implements Expression{
 		return new NullVariable();
 	}
 
+	public String getConvertionName() {
+		return null;
+	}
+
 }

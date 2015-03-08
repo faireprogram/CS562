@@ -81,6 +81,15 @@ public abstract class AbstractVariable implements Variable{
 		}
 		return  getName();
 	}
+	
+	
+
+	/* (non-Javadoc)
+	 * @see org.stevens.cs562.sql.Variable#getConvertionName()
+	 */
+	public String getConvertionName() {
+		return getName().toLowerCase();
+	}
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)

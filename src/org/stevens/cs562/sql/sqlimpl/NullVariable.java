@@ -38,5 +38,10 @@ public class NullVariable implements Variable{
 		return "";
 	}
 
+	public String getConvertionName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 	
 }

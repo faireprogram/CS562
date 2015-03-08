@@ -58,5 +58,30 @@ public class ComparisonAndComputeExpression extends AbstractExpression{
 		return right;
 	}
 
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.left.toString() + " " + this.operator.toString() + " " + this.right.toString();
+	}
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof ComparisonAndComputeExpression) {
+			ComparisonAndComputeExpression exp = (ComparisonAndComputeExpression)obj;
+			if(exp.getLeft().equals(this.getLeft()) && exp.getRight().equals(getRight()) && exp.getOperator().equals(getOperator())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	
 	
 }

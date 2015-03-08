@@ -6,7 +6,7 @@ package org.stevens.cs562.sql;
  */
 public enum ComparisonAndComputeOperator {
 	GREATER(">"),GREATER_EQUAL(">="),LESS("<"),LESS_EQUAL("<="),EQUAL("="), NOT_EQUAL("<>"),
-	ADDITION("+"), MINUS("-"), MULTIPLICATION("*"), DIVID("/");
+	ADDITION("+"), MINUS("-"), MULTIPLICATION("*"), DIVID("/"), AND("and"), OR("or");
 	
 	private String name;
 	private String symbol;
@@ -23,5 +23,14 @@ public enum ComparisonAndComputeOperator {
 	public String getSymbol() {
 		return symbol;
 	}
+	/* (non-Javadoc)
+	 * @see java.lang.Enum#toString()
+	 */
+	@Override
+	public String toString() {
+		return this.symbol;
+	}
+	
+	
 	
 }

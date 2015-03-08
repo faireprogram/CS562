@@ -37,7 +37,12 @@ public abstract class AbstractExpression  implements Expression{
 	public Variable getVariable() {
 		return new NullVariable();
 	}
-	
-	
+
+	/* (non-Javadoc)
+	 * @see org.stevens.cs562.sql.Expression#getConvertionName()
+	 */
+	public String getConvertionName() {
+		return null;
+	}
 	
 }

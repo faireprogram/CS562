@@ -4,6 +4,7 @@ import org.stevens.cs562.sql.AbstractExpression;
 import org.stevens.cs562.sql.AggregateOperator;
 import org.stevens.cs562.sql.Variable;
 import org.stevens.cs562.sql.visit.Visitor;
+import org.stevens.cs562.utils.StringBuilder;
 
 /**
  * @author faire_000
@@ -68,8 +69,38 @@ public class AggregateExpression extends AbstractExpression{
 	 */
 	@Override
 	public String toString() {
+		if(!StringBuilder.isEmpty(this.attributes.getBelong().getName())) {
 			return this.operator.getName() + "(" + this.attributes.getBelong().getName() + "." + this.attributes.getName() + ")";
+		}
+		return this.operator.getName() + "(" + this.attributes.getName() + ")";
 	}
+
+	/* (non-Javadoc)
+	 * @see org.stevens.cs562.sql.AbstractExpression#getConvertionName()
+	 */
+	@Override
+	public String getConvertionName() {
+		if(!(this.getVariable().getBelong() instanceof NullVariable)) {
+			return (this.getVariable().getBelong().getName() + "_" + getVariable().getName() + "_" + getOperator()).toLowerCase();
+		}
+		return (this.getVariable().getName() + "_" +getOperator()).toLowerCase();
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof AggregateExpression) {
+			AggregateExpression exp = (AggregateExpression)obj;
+			if(exp.getOperator().equals(this.getOperator()) && exp.getVariable().equals(this.getVariable())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	
 	
 	
 	

@@ -42,8 +42,22 @@ public class AttributeVariable extends AbstractVariable{
 	}
 
 	public void visit() {
-		// TODO Auto-generated method stub
 		
 	}
+
+	/* (non-Javadoc)
+	 * @see org.stevens.cs562.sql.AbstractVariable#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof AttributeVariable) {
+			AttributeVariable var = (AttributeVariable)obj;
+			if(var.getBelong().equals(getBelong()) && var.getName().equals(getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 
 }
