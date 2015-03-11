@@ -22,11 +22,10 @@ import javax.tools.ToolProvider;
 
 public class DynamicCompiler {
 
-	String path;
-	String compile_path = path + "\\class";
+	String path = Constants.OUT_PUT_PATH;
+	String compile_path = path + "\\output\\class";
 	
 	public DynamicCompiler() {
-		this.path = ".\\output";
 	}
 	
 	public void compileAndRun() {
@@ -53,6 +52,8 @@ public class DynamicCompiler {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			} catch(IllegalStateException e) {
+				e.printStackTrace();
 			}
 	}
 	
@@ -60,15 +61,15 @@ public class DynamicCompiler {
 		File current_compile_path = new File(compile_path);
 		current_compile_path.mkdirs();
 		
-		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 		DiagnosticListener<JavaFileObject> diaglistener = new MyDiagnosticListener();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diaglistener, null, null);
 		List<String> optionList = new ArrayList<String>();
 		optionList.add("-d");
-		optionList.add("./output/class");
+		optionList.add(current_compile_path.getAbsolutePath());
 		optionList.add("-classpath");
         optionList.add(System.getProperty("java.class.path") + ";dist/InlineCompiler.jar");
+       System.out.println(optionList);
         Iterable<? extends JavaFileObject> compilationUnit  = fileManager.getJavaFileObjectsFromFiles(Arrays.asList(loadAllJavaFiles()));
         JavaCompiler.CompilationTask task = compiler.getTask(
         		null, 
@@ -78,7 +79,7 @@ public class DynamicCompiler {
                 null, 
                 compilationUnit);
         if (task.call()) {
-        	 URLClassLoader classLoader = new URLClassLoader(new URL[]{new File("./output/class").toURI().toURL()});
+        	 URLClassLoader classLoader = new URLClassLoader(new URL[]{current_compile_path.toURI().toURL()});
         	 Class<?> cls = classLoader.loadClass(Constants.GENERATE_CODE_MF_MAIN);
         	 Method main = cls.getDeclaredMethod("main", String[].class); // get the main method using reflection
         	 Object[] args = new Object[] { new String[0] };
@@ -90,8 +91,7 @@ public class DynamicCompiler {
 	private class MyDiagnosticListener implements DiagnosticListener<JavaFileObject> {
 
 		public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
-			System.out.println("#" + diagnostic.getColumnNumber());
-			System.out.println("#" + diagnostic.getSource().toUri());
+			System.out.println(diagnostic.toString());
 			
 		}
 		

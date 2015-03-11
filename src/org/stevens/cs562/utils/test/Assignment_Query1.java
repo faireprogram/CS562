@@ -29,6 +29,13 @@ import java.sql.Statement;
  * zding6@postgres:~/java$ java Basic_Query.Assignment_Query2
 */
 
+/*
+ * select avg(X.m), avg(Y.m), avg(Z.m)
+ * 
+ * 
+ * 
+ */
+
 public class Assignment_Query1 {
 	public static void main(String[] args) 
 	{

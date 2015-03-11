@@ -111,8 +111,8 @@ public class TestGenerator {
 		/*
 		 * dynamic 
 		 */
-//		DynamicCompiler compiler = new DynamicCompiler();
-//		compiler.compileAndRun();
+		DynamicCompiler compiler = new DynamicCompiler();
+		compiler.compileAndRun();
 	}
 	
 	/**
