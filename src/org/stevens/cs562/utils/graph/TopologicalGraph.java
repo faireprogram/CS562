@@ -140,6 +140,16 @@ public class TopologicalGraph<K> {
 		public void setConnection(Integer connection) {
 			this.connection = connection;
 		}
+
+		/* (non-Javadoc)
+		 * @see java.lang.Object#toString()
+		 */
+		@Override
+		public String toString() {
+			return connection.toString();
+		}
+		
+		
 		
 	};
 	
