@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
@@ -9,27 +8,13 @@ import java.sql.Statement;
 import java.util.Scanner;
 
 
-public class printDS {
-
-	public static void main(String[] args) throws FileNotFoundException {
+public class print_DS{
+	
+	public void print_ds( ) {
 		
 		String usr ="postgres";
 		String pwd ="19930920";
 		String url ="jdbc:postgresql://localhost:5432/postgres";
-		String cust_dt="",prod_dt="",quant_dt="", date_dt="";
-		
-		File file_input  = new File("sampleQuery.txt");
-		Scanner input = new Scanner(file_input);
-		
-		int flag_sum=0, flag_cnt = 0; //indicate whether attribute is already there or not
-		
-		String [] selectattr = input.nextLine().split(" ");
-		int num_of_var = Integer.parseInt(input.nextLine());
-		String [] groupattr = input.nextLine().split(" ");
-		String [] aggrfunc = input.nextLine().split(" ");		
-		String [] selectcon = input.nextLine().split(" ");
-		String [] havingcon = input.nextLine().split(" ");
-		
 		
 		try 
 		{
@@ -42,8 +27,21 @@ public class printDS {
 			e.printStackTrace();
 		}
 		
-		try 
-		{
+		
+		int flag_sum=0, flag_cnt = 0; //indicate whether attribute is already there or not
+		String cust_dt="",prod_dt="",quant_dt="", date_dt="";
+		
+		try {
+			File file_input  = new File("sampleQuery.txt");
+			Scanner input = new Scanner(file_input);
+			
+			String [] selectattr = input.nextLine().split(" ");
+			int num_of_var = Integer.parseInt(input.nextLine());
+			String [] groupattr = input.nextLine().split(" ");
+			String [] aggrfunc = input.nextLine().split(" ");		
+			String [] selectcon = input.nextLine().split(" ");
+			String [] havingcon = input.nextLine().split(" ");
+			
 			//build the connection  and execute the sql statement
 			Connection conn = DriverManager.getConnection(url, usr, pwd); 
 
@@ -126,6 +124,10 @@ public class printDS {
 			}
 			
 			System.out.println("}");
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			System.out.println("File is not found!");
+			e1.printStackTrace();
 		}
 		catch(SQLException e) 
 		{
