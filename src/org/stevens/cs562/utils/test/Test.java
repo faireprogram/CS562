@@ -137,5 +137,8 @@ public class Test {
 		System.out.println(builder.hashCode());
 		System.out.println("aaa".hashCode());
 		System.out.println(5/2);
+		while(true) {
+			System.out.println("xx");
+		}
 	}
 }

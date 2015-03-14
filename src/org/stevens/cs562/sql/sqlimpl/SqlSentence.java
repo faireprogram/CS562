@@ -1,5 +1,8 @@
 package org.stevens.cs562.sql.sqlimpl;
 
+import java.util.HashMap;
+
+import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.SQLStringParsers;
 
 public class SqlSentence {
@@ -8,33 +11,36 @@ public class SqlSentence {
 	 * selectElement
 	 */
 	private SelectElement selectElement;
-	
+
 	/**
 	 * fromElement
 	 */
 	private FromElement fromElement;
-	
+
 	/**
 	 * whereElement
 	 */
 	private WhereElement whereElement;
-	
+
 	/**
 	 * groupByElement
 	 */
 	private GroupByElement groupByElement;
-	
+
 	/**
 	 * havingElement
 	 */
 	private HavingElement havingElement;
-	
+
 	/**
 	 * suchThatElement
 	 */
 	private SuchThatElement suchThatElement;
-	
-	
+
+	/**
+	 * HashMap
+	 */
+	private HashMap<String, GroupingVaribale> grouping_variable_dic;
 
 	public SqlSentence(String sql) {
 		String[] tmp = SQLStringParsers.parseString(sql);
@@ -88,9 +94,16 @@ public class SqlSentence {
 		return suchThatElement;
 	}
 
+	/**
+	 * @return the grouping_variable_dic
+	 */
+	public HashMap<String, GroupingVaribale> getGrouping_variable_dic() {
+		if(grouping_variable_dic == null) {
+			grouping_variable_dic = new HashMap<String, GroupingVaribale>();
+			GroupingVaribale varible_zero = new GroupingVaribale(Constants.GROUPING_ZERO, String.valueOf(0));
+			grouping_variable_dic.put(Constants.GROUPING_ZERO, varible_zero);
+		}
+		return grouping_variable_dic;
+	}
 
-	
-	
-	
-	
 }

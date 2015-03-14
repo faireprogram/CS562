@@ -9,9 +9,9 @@ public class Constants {
 			+ "("
 			+ "\\s+group\\s+by\\s+(?<groupby>.+?)"
 			+ "("
-				+ "(\\s+having\\s+(?<having1>.+?))?\\s+suchthat\\s+(?<suchthat>.+?)(\\s+having\\s+(?<having>.+?))?"
+				+ "(\\s+having\\s+(?<having1>.+?))?\\s+such\\s+that\\s+(?<suchthat>.+?)(\\s+having\\s+(?<having>.+?))?"
 			+ ")?"
-		+ ")?)?\\s*;\\s*$";
+		+ ")?)?\\s*;??\\s*$";
 	
 	/**
 	 * KEY_WORD_SELECT
@@ -94,4 +94,5 @@ public class Constants {
 	
 	public static String OUT_PUT_PATH = "D:\\Project\\Java\\CS562\\Test\\src\\";
 	
+	public static String GROUPING_ZERO = "self";
 }

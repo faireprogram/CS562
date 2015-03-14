@@ -22,6 +22,12 @@ public class GroupingVaribale extends AbstractVariable{
 		super();
 		this.variable_name = variable_name;
 	}
+	
+	public GroupingVaribale(String variable_name, String alias_name) {
+		super();
+		this.variable_alias = alias_name;
+		this.variable_name = variable_name;
+	}
 
 	public Variable getBelong() {
 		return null;

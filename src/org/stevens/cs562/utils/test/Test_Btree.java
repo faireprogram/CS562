@@ -25,6 +25,7 @@ public class Test_Btree {
 			if(k == 4719) {
 				System.out.println(k);
 				System.out.println("-------------------------------------------");
+				btree_test.analysis();
 			//	btree_test.analysis();
 			}
 			if(k == 4720) {
@@ -43,6 +44,7 @@ public class Test_Btree {
 //			System.out.println("list.add("+n+");");
 //			btree_test.add(n);
 //		}
+		Integer s = btree_test.get(2432);
 		btree_test.analysis();
 		
 		System.out.println();
