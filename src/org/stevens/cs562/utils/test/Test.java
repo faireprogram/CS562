@@ -128,5 +128,14 @@ public class Test {
 		RelationBuilder builder = new RelationBuilder(sqlsetence);
 		builder.build();
 		
+		String av = "aaa";
+		String az = "aab";
+		Integer af = 1111;
+		System.out.println(av.hashCode());
+		System.out.println(az.hashCode());
+		System.out.println(af.hashCode());
+		System.out.println(builder.hashCode());
+		System.out.println("aaa".hashCode());
+		System.out.println(5/2);
 	}
 }
