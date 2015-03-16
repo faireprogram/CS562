@@ -1,4 +1,4 @@
 	select prod, month, avg(quant), max(quant), min(quant)
 	from Sales
-	where year=¡®1997¡¯
+	where year= 1997 or month =1
 	group by prod, month

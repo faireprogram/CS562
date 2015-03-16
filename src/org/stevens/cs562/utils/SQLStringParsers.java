@@ -47,12 +47,12 @@ public class SQLStringParsers {
 				tmp[5] = null;
 			}
 			
-			System.out.println(matchers.group("selectcause"));
-			System.out.println(matchers.group("fromcause"));
-			System.out.println(matchers.group("wherecause"));
-			System.out.println(matchers.group("groupby"));
-			System.out.println(matchers.group("suchthat"));
-			System.out.println(matchers.group("having"));
+//			System.out.println(matchers.group("selectcause"));
+//			System.out.println(matchers.group("fromcause"));
+//			System.out.println(matchers.group("wherecause"));
+//			System.out.println(matchers.group("groupby"));
+//			System.out.println(matchers.group("suchthat"));
+//			System.out.println(matchers.group("having"));
 			
 		}
 		return tmp;
@@ -147,6 +147,8 @@ public class SQLStringParsers {
 		Expression final_expression = null;
 		if(express.trim().matches("(?i:avg\\(.+?\\)|count\\(.+?\\)|min\\(.+?\\)|max\\(.+?\\)|sum\\(.+?\\))")) {
 			final_expression = processAggregateExpression(express.trim(), dic);
+		} else if(StringBuilder.isNumber(express)) {
+			final_expression = new IntegerExpression(Integer.valueOf(express.trim()));
 		} else {
 			final_expression = processSimpleExpression(express.trim(), dic);
 		}
@@ -233,7 +235,7 @@ public class SQLStringParsers {
 		Expression previous = null;
 		String operator_sign = null;
 		String prev_sign = null;
-		while(matcher.find()) {
+		while(matcher.find()) { //it's a multiple expression e.g year = 1997 and month = 2
 			end = matcher.start();
 			if(operator_sign != null) {
 				prev_sign = operator_sign;
@@ -259,7 +261,7 @@ public class SQLStringParsers {
 			if(operator_sign.equals(ComparisonAndComputeOperator.OR.getSymbol())) {
 				previous = compositeComparisonAndComputeExpression(previous, current, ComparisonAndComputeOperator.OR);
 			}
-		} else {
+		} else { // it's a single expression e.g year = 1997
 			previous =  gernerateComparisonAndComputeExpression(sql, dic);
 		}
 		

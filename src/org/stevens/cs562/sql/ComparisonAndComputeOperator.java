@@ -5,18 +5,24 @@ package org.stevens.cs562.sql;
  *
  */
 public enum ComparisonAndComputeOperator {
-	GREATER(">"),GREATER_EQUAL(">="),LESS("<"),LESS_EQUAL("<="),EQUAL("="), NOT_EQUAL("<>"),
-	ADDITION("+"), MINUS("-"), MULTIPLICATION("*"), DIVID("/"), AND("and"), OR("or");
+	GREATER(">",">"),GREATER_EQUAL(">=",">="),LESS("<","<"),LESS_EQUAL("<=","<="),EQUAL("=","=="), NOT_EQUAL("<>","!="),
+	ADDITION("+", "+"), MINUS("-", "-"), MULTIPLICATION("*", "*"), DIVID("/", "/"), AND("and", "&&"), OR("or", "||");
 	
-	private String name;
+	private String java_name;
 	private String symbol;
-	private ComparisonAndComputeOperator(String symbol) {
-//		this.name = name;
+	private ComparisonAndComputeOperator(String symbol, String java_name) {
+		this.java_name = java_name;
 		this.symbol = symbol;
 	}
-	public String getName() {
-		return name;
+	
+	/**
+	 * @return the java_name
+	 */
+	public String getJava_name() {
+		return java_name;
 	}
+
+
 	/**
 	 * @return the symbol
 	 */

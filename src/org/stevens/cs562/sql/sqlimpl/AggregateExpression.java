@@ -70,7 +70,7 @@ public class AggregateExpression extends AbstractExpression{
 	 */
 	@Override
 	public String toString() {
-		if(!StringBuilder.isEmpty(this.attributes.getBelong().getName())) {
+		if(!this.attributes.getBelong().getName().equals(Constants.GROUPING_ZERO)) {
 			return this.operator.getName() + "(" + this.attributes.getBelong().getName() + "." + this.attributes.getName() + ")";
 		}
 		return this.operator.getName() + "(" + this.attributes.getName() + ")";

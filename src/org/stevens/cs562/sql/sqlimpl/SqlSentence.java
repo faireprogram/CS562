@@ -41,6 +41,11 @@ public class SqlSentence {
 	 * HashMap
 	 */
 	private HashMap<String, GroupingVaribale> grouping_variable_dic;
+	
+	/**
+	 * HashMap
+	 */
+	private HashMap<String, String> attributes_type;
 
 	public SqlSentence(String sql) {
 		String[] tmp = SQLStringParsers.parseString(sql);
@@ -107,6 +112,18 @@ public class SqlSentence {
 			grouping_variable_dic.put(Constants.GROUPING_ZERO, varible_zero);
 		}
 		return grouping_variable_dic;
+	}
+	
+	
+
+	/**
+	 * @return the attributes_type
+	 */
+	public HashMap<String, String> getAttributes_type() {
+		if(attributes_type == null) {
+			attributes_type = new HashMap<String, String>();
+		}
+		return attributes_type;
 	}
 
 	/* (non-Javadoc)
