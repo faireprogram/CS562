@@ -4,6 +4,7 @@ import org.stevens.cs562.sql.AbstractExpression;
 import org.stevens.cs562.sql.AggregateOperator;
 import org.stevens.cs562.sql.Variable;
 import org.stevens.cs562.sql.visit.Visitor;
+import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.StringBuilder;
 
 /**
@@ -80,10 +81,12 @@ public class AggregateExpression extends AbstractExpression{
 	 */
 	@Override
 	public String getConvertionName() {
-		if(!(this.getVariable().getBelong() instanceof NullVariable)) {
-			return (this.getVariable().getBelong().getName() + "_" + getVariable().getName() + "_" + getOperator()).toLowerCase();
-		}
-		return (this.getVariable().getName() + "_" +getOperator()).toLowerCase();
+//		if(this.getVariable().getBelong() != null && !this.getVariable().getBelong().equals(Constants.GROUPING_ZERO)) {
+//			return ( "_" + this.getVariable().getBelong().getAlias() + "_" + getVariable().getName() + "_" + getOperator()).toLowerCase();
+//		}
+//		return (this.getVariable().getName() + "_" +getOperator()).toLowerCase();
+		
+		return ( "_" + this.getVariable().getBelong().getAlias() + "_" + getVariable().getName() + "_" + getOperator()).toLowerCase();
 	}
 
 	/* (non-Javadoc)
@@ -98,6 +101,13 @@ public class AggregateExpression extends AbstractExpression{
 			}
 		}
 		return false;
+	}
+	
+	
+	public String getSumCountName() {
+		String str =  "_" + this.getVariable().getBelong().getAlias() + "_" + getVariable().getName() + "_" + "sum,";
+		   str +=  "_" + this.getVariable().getBelong().getAlias() + "_" + getVariable().getName() + "_" + "count";
+		   return str;
 	}
 	
 	

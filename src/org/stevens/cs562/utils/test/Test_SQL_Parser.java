@@ -7,8 +7,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.FileSystems;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.stevens.cs562.sql.sqlimpl.SqlSentence;
+import org.stevens.cs562.utils.ResourceHelper;
 
 public class Test_SQL_Parser {
 
@@ -22,37 +25,25 @@ public class Test_SQL_Parser {
  
  */
 	
-	public static String readFromFile() {
-		String result = "";
-		 
-		BufferedReader br = null; 
-		
-		try {
-			URL url = Test_SQL_Parser.class.getClassLoader().getResource("Sql");
-			String sCurrentLine = "";
-			br = new BufferedReader(new FileReader(url.getPath()));
-			
-			while ((sCurrentLine = br.readLine()) != null) {
-				result = result + sCurrentLine;
-			}
-			br.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return result;
-
-	}
-	
 	public Test_SQL_Parser() {
 	}
 	
 	public static void main(String[] args) {
-		SqlSentence ss = new SqlSentence(readFromFile());
+		SqlSentence ss = new SqlSentence(ResourceHelper.readFromFile());
+		System.out.println(ss);
+//		 String stringToSearch = "Four score and seven years ago our fathers ...";
+//	     
+//		    // this won't work because the pattern is in upper-case
+//		    System.out.println("Try 1: " + stringToSearch.matches(".*SEVEN.*"));
+//		     
+//		    // the magic (?i:X) syntax makes this search case-insensitive, so it returns true
+//		    System.out.println("Try 2: " + stringToSearch.matches("?i:.*SEVEN.*"));
+//		String sql = "a<>b and  zz <= x";
+//		String  f = ">=|<=|<>|>|<|=";
+//		String[] ss = sql.split(f);
+//		
+//	
+//		System.out.println(sql.contains("<>"));
 	}
 
 }

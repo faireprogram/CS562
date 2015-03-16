@@ -44,10 +44,13 @@ public class SqlSentence {
 
 	public SqlSentence(String sql) {
 		String[] tmp = SQLStringParsers.parseString(sql);
-		selectElement = new SelectElement(tmp[0], this);
-		fromElement = new FromElement(tmp[1], this);
-		whereElement = new WhereElement(tmp[2], this);
+		/* THIS SHOULD BE FIRST */
 		groupByElement = new GroupByElement(tmp[3], this);
+		fromElement = new FromElement(tmp[1], this);
+		/* THIS SHOULD BE SECOND */
+		selectElement = new SelectElement(tmp[0], this);
+		/* THIS SHOULD BE LAST */
+		whereElement = new WhereElement(tmp[2], this);
 		suchThatElement = new SuchThatElement(tmp[4], this);
 		havingElement = new HavingElement(tmp[5], this);
 	}
@@ -106,4 +109,13 @@ public class SqlSentence {
 		return grouping_variable_dic;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return selectElement.toString() + fromElement.toString() + whereElement.toString() + groupByElement.toString() + suchThatElement.toString() + havingElement.toString();
+	}
+
+	
 }

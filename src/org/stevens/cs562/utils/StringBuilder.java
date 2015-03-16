@@ -21,4 +21,23 @@ public class StringBuilder {
 		}
 		return false;
 	}
+	
+	public static boolean isNumber(String s1) {
+		if(s1 == null) {
+			return false;
+		}
+		if(s1.trim().matches("^\\d+$")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static int toInt(String s1) {
+		if(s1 == null) {
+			return 0;
+		} else {
+			return Integer.valueOf(s1.trim());
+		}
+	}
+	
 }

@@ -1,6 +1,7 @@
 package org.stevens.cs562.sql.sqlimpl;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.stevens.cs562.sql.AbstractSqlElement;
@@ -34,6 +35,21 @@ public class SelectElement extends AbstractSqlElement {
 	protected void convert(String elementSql) {
 		SQLStringParsers.parseStringToSelectElement(elementSql, this);
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		Iterator<Expression> iterator = projectItems.iterator();
+		String final_to_string = null;
+		while(iterator.hasNext()) {
+			final_to_string += iterator.next().toString();
+		}
+		return final_to_string;
+	}
+	
+	
 
 	
 	

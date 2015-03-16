@@ -2,6 +2,7 @@ package org.stevens.cs562.sql.sqlimpl;
 
 import org.stevens.cs562.sql.AbstractExpression;
 import org.stevens.cs562.sql.Variable;
+import org.stevens.cs562.utils.Constants;
 
 public class SimpleExpression extends AbstractExpression{
 
@@ -38,7 +39,7 @@ public class SimpleExpression extends AbstractExpression{
 	 */
 	@Override
 	public String getConvertionName() {
-		if(!(this.getVariable().getBelong() instanceof NullVariable)) {
+		if(!(this.getVariable().getBelong().getName().equals(Constants.GROUPING_ZERO))) {
 			return (getVariable().getBelong().getName() + "_" + getVariable().getName()).toLowerCase();
 		}
 		return getVariable().getName().toLowerCase();

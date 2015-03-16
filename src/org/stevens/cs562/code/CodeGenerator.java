@@ -10,7 +10,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.stevens.cs562.sql.AggregateOperator;
 import org.stevens.cs562.sql.Expression;
+import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
+import org.stevens.cs562.sql.sqlimpl.AttributeVariable;
+import org.stevens.cs562.sql.sqlimpl.GroupByElement;
+import org.stevens.cs562.sql.sqlimpl.GroupingVaribale;
+import org.stevens.cs562.sql.sqlimpl.HavingElement;
 import org.stevens.cs562.sql.sqlimpl.SelectElement;
 import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
 import org.stevens.cs562.sql.sqlimpl.SqlSentence;
@@ -67,48 +73,58 @@ public class CodeGenerator {
 	 * @throws SQLException
 	 */
 	private void generateMF_Table(FileOutputStream file) throws IOException, SQLException {
-
+		/* fetch the element from sqlsentence*/
 		SelectElement selectElement = sqlsentence.getSelectElement();
+		GroupByElement groupByElement = sqlsentence.getGroupByElement();
 		SuchThatElement suchThatElement = sqlsentence.getSuchThatElement();
+		HavingElement havingElement = sqlsentence.getHavingElement();
 		AggregateExpressionVisitorImpl visitor = new AggregateExpressionVisitorImpl();
+		
+		/* find the Aggression Expression and Add it to the set*/
 		for(Expression exp : suchThatElement.getSuch_that_expressions()) {
 			visitor.visit(exp);
 		}
+		for(Expression exp : havingElement.getHaving_expressions()) {
+			visitor.visit(exp);
+		}
+		
+		// SelectElement
+		for(Expression project_items : selectElement.getProjectItems()) {
+			if(project_items instanceof AggregateExpression) {
+				visitor.getAggregate_expression().add((AggregateExpression)project_items);
+			}
+		}
 		
 		String str = "public class " + Constants.GENERATE_CODE_MF_TABLE +" {\n";
-		// SelectElement
-		for(Expression projectItem : selectElement.getProjectItems()) {
-			String columName = projectItem.getVariable().getName();
+			str += "\t//------------------------------------------------------------------\n";
+			str += "\t// generate grouping attributes automatically\n";
+			str += "\t//------------------------------------------------------------------\n";
+		
+		for(AttributeVariable grouping_attributes : groupByElement.getGrouping_attributes()) {
+			String columName = grouping_attributes.getName();
 			String type = Constants.INTERGER_TYPE;
-			if(projectItem instanceof SimpleExpression) {
-				type = find_type(columName, connection);
-			}
-			columName = projectItem.getConvertionName();
+			type = find_type(grouping_attributes.getName(), connection);
 			str += "\t" + type + " " + columName + ";\n";
 		}
-		//SuchThat Element
-		for(Expression suchthat : visitor.getAggregate_expression()) {
-			if(!isIn(suchthat, selectElement.getProjectItems())) {
-				String columName = suchthat.getConvertionName();
-				String type = Constants.INTERGER_TYPE;
-				str += "\t" + type + " " + columName + ";\n";
-			}
-		}
 		
+		str += "\t//------------------------------------------------------------------\n";
+		str += "\t// generate aggregates value automatically\n";
+		str += "\t//------------------------------------------------------------------\n";
+		for(Expression aggre : visitor.getAggregate_expression()) {
+				String columName = aggre.getVariable().getName();
+				String type = find_type(columName, connection);
+				if(((AggregateExpression)aggre).getOperator().equals(AggregateOperator.AVERAGE)) {
+					String[] s = ((AggregateExpression)aggre).getSumCountName().split(",");
+					str += "\t" + type + " " + s[0] + ";\n";
+					str += "\t" + type + " " + s[1] + ";\n";
+				}
+				str += "\t" + type + " " + aggre.getConvertionName() + ";\n";
+		}
+
 		str += "}\n";
-		//System.out.println(str);
 		file.write(str.getBytes(), 0, str.length());
 		file.flush();
 		file.close();
-	}
-	
-	private boolean isIn(Expression exp1, Collection<Expression> expCollection) {
-		for(Expression exp : expCollection) {
-			if(exp.equals(exp1)) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	private String find_type(String column, Connection connection) throws SQLException {

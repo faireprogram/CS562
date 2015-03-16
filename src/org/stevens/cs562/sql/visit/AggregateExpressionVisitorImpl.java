@@ -1,7 +1,7 @@
 package org.stevens.cs562.sql.visit;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
@@ -9,7 +9,7 @@ import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
 
 public class AggregateExpressionVisitorImpl extends AbstractVisitor{
 	
-	private List<AggregateExpression> aggregate_expression = new ArrayList<AggregateExpression>();
+	private Set<AggregateExpression> aggregate_expression = new HashSet<AggregateExpression>();
 
 	/* (non-Javadoc)
 	 * @see org.stevens.cs562.sql.visit.AbstractVisitor#visit(org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression)
@@ -39,7 +39,7 @@ public class AggregateExpressionVisitorImpl extends AbstractVisitor{
 	/**
 	 * @return the aggregate_expression
 	 */
-	public List<AggregateExpression> getAggregate_expression() {
+	public Set<AggregateExpression> getAggregate_expression() {
 		return aggregate_expression;
 	}
 	

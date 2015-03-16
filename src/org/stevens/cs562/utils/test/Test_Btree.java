@@ -31,7 +31,7 @@ public class Test_Btree {
 			if(k == 4720) {
 				System.out.println(k);
 				System.out.println("-------------------------------------------");
-				//btree_test.analysis();
+				btree_test.analysis();
 			}
 			btree_test.add(list.get(k));
 			

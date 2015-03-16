@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import org.stevens.cs562.sql.sqlimpl.NullVariable;
 import org.stevens.cs562.sql.visit.Visitor;
+import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.StringBuilder;
 
 
@@ -76,7 +77,7 @@ public abstract class AbstractVariable implements Variable{
 	@Override
 	public String toString() {
 		//if(getBelong().getName())
-		if(this.getBelong().getName() != "") {
+		if(this.getBelong() != null && !this.getBelong().getName().equals(Constants.GROUPING_ZERO)) {
 			return this.getBelong().getName() + "." + getName();
 		}
 		return  getName();
