@@ -104,7 +104,7 @@ public class CodeGenerator {
 			String columName = grouping_attributes.getName();
 			String type = Constants.INTERGER_TYPE;
 			type = find_type(grouping_attributes.getName(), connection);
-			str += "\t" + type + " " + columName + ";\n";
+			str += "\tpublic " + type + " " + columName + ";\n";
 		}
 		
 		str += "\t//------------------------------------------------------------------\n";
@@ -115,10 +115,10 @@ public class CodeGenerator {
 				String type = find_type(columName, connection);
 				if(((AggregateExpression)aggre).getOperator().equals(AggregateOperator.AVERAGE)) {
 					String[] s = ((AggregateExpression)aggre).getSumCountName().split(",");
-					str += "\t" + type + " " + s[0] + ";\n";
-					str += "\t" + type + " " + s[1] + ";\n";
+					str += "\tpublic " + type + " " + s[0] + ";\n";
+					str += "\tpublic " + type + " " + s[1] + ";\n";
 				}
-				str += "\t" + type + " " + aggre.getConvertionName() + ";\n";
+				str += "\tpublic " + type + " " + aggre.getConvertionName() + ";\n";
 		}
 
 		str += "}\n";

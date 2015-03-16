@@ -1,5 +1,5 @@
-	select prod, month, avg( X.quant), avg(Y.quant)
+	select prod, month, avg( X.quant), avg(Y.quant), Max(Z.quant)
 	from Sales
 	where year=¡®1997¡¯
-	group by prod, month : X , Y
-	such that 3*X.prod=prod and 3*X.month>=maX(month) or AVG(X.month) <=month, Y.prod=prod and Y.month<month
+	group by prod, month : X , Y, Z
+	such that 3*X.prod=prod and 3*X.month>=maX(month) or AVG(X.month) <=month, Y.prod=prod and Y.month<month, Z.month = 1 

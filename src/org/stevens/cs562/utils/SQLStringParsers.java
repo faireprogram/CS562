@@ -145,7 +145,7 @@ public class SQLStringParsers {
 	 */
 	private static Expression processExpression(String express, HashMap<String, GroupingVaribale> dic) {
 		Expression final_expression = null;
-		if(express.trim().matches("(?i:avg\\(.+?\\)|count\\(.+?\\)|avg\\(.+?\\)|max\\(.+?\\))")) {
+		if(express.trim().matches("(?i:avg\\(.+?\\)|count\\(.+?\\)|min\\(.+?\\)|max\\(.+?\\)|sum\\(.+?\\))")) {
 			final_expression = processAggregateExpression(express.trim(), dic);
 		} else {
 			final_expression = processSimpleExpression(express.trim(), dic);
@@ -158,7 +158,7 @@ public class SQLStringParsers {
 	 * AggressionExpression generator
 	 */
 	private static AggregateExpression processAggregateExpression(String express, HashMap<String, GroupingVaribale> dic) {
-		String value = express.replaceAll("(?i:avg\\((.+?)\\)|count\\((.+?)\\)|avg\\((.+?)\\)|max\\((.+?)\\)|sum\\((.+?)\\))", "$1$2$3$4$5").trim();
+		String value = express.replaceAll("(?i:avg\\((.+?)\\)|count\\((.+?)\\)|min\\((.+?)\\)|max\\((.+?)\\)|sum\\((.+?)\\))", "$1$2$3$4$5").trim();
 		
 		String operatorSign = express.replaceAll("(?i:(avg)\\(.+?\\)|(count)\\(.+?\\)|(min)\\(.+?\\)|(max)\\(.+?\\)|(sum)\\(.+?\\))", "$1$2$3$4$5");
 

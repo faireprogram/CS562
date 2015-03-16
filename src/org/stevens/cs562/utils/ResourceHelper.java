@@ -16,7 +16,7 @@ public class ResourceHelper {
 		BufferedReader br = null; 
 		
 		try {
-			URL url = Test_SQL_Parser.class.getClassLoader().getResource("Sql");
+			URL url = Test_SQL_Parser.class.getClassLoader().getResource("Sql1");
 			String sCurrentLine = "";
 			br = new BufferedReader(new FileReader(url.getPath()));
 			
