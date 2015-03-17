@@ -43,18 +43,19 @@ public class TestGenerator {
 //		/*
 //		 * dynamic 
 //		 */
-//		DynamicCompiler compiler = new DynamicCompiler();
-//		compiler.compileAndRun();
+		DynamicCompiler compiler = new DynamicCompiler();
+		compiler.compileAndRun();
 	}
 	
 	/**
 	 * @return
 	 * @throws SQLException 
+	 * @throws IOException 
 	 */
-	private static Connection getConnection() throws SQLException {
-		String usr ="postgres";
-		String pwd ="zw198787";
-		String url ="jdbc:postgresql://localhost:5432/test";
+	private static Connection getConnection() throws SQLException, IOException {
+		String usr = ResourceHelper.getValue("usrname");
+		String pwd =ResourceHelper.getValue("password");;
+		String url =ResourceHelper.getValue("postsql_url");
 		try 
 		{
 			Class.forName("org.postgresql.Driver");

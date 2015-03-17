@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,22 +19,28 @@ import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
 import org.stevens.cs562.sql.sqlimpl.AttributeVariable;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
 import org.stevens.cs562.sql.sqlimpl.GroupByElement;
+import org.stevens.cs562.sql.sqlimpl.GroupingVaribale;
+import org.stevens.cs562.sql.sqlimpl.HavingElement;
 import org.stevens.cs562.sql.sqlimpl.IntegerExpression;
 import org.stevens.cs562.sql.sqlimpl.SelectElement;
 import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
 import org.stevens.cs562.sql.sqlimpl.SqlSentence;
 import org.stevens.cs562.sql.sqlimpl.WhereElement;
 import org.stevens.cs562.sql.visit.AggregateExpressionVisitorImpl;
+import org.stevens.cs562.sql.visit.RelationBuilder;
 import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.GeneratorHelper;
 import org.stevens.cs562.utils.ResourceHelper;
+import org.stevens.cs562.utils.graph.AdjacentNode;
 
 public class CodeGenerator {
 
 	/**
 	 * sentence
 	 */
-	SqlSentence sqlsentence;
+	private SqlSentence sqlsentence;
+	
+	private RelationBuilder relationBuilder;
 	
 //	private String usr = "postgres";
 //	private String psw = "zw198787";
@@ -42,6 +49,16 @@ public class CodeGenerator {
 	private String usr;
 	private String psw;
 	private String url;
+
+	//----------------------------------------------------------------------------------------
+	private List<Collection<AdjacentNode<GroupingVaribale>>> relationship;
+	
+	//----------------------------------------------------------------------------------------
+	// Global Status Variable
+	private int current_scan = 0;
+	private int current_step = 0; // 0 => where/such step, 1 => having
+	
+	
 	/**
 	 * 
 	 */
@@ -53,6 +70,8 @@ public class CodeGenerator {
 		this.usr = ResourceHelper.getValue("usrname");
 		this.psw = ResourceHelper.getValue("password");
 		this.url = ResourceHelper.getValue("postsql_url");
+		this.relationBuilder = new RelationBuilder(sqlsentence);
+		this.relationship = this.relationBuilder.build();
 	}
 
 	public void generate() throws IOException {
@@ -103,15 +122,33 @@ public class CodeGenerator {
 		str += "\t//------------------------------------------------------------------\n";
 		str += "\t// generate aggregates value automatically\n";
 		str += "\t//------------------------------------------------------------------\n";
+		HashMap<String, String> records = new HashMap<String, String>();
 		for(Expression aggre : visitor.getAggregate_expression()) {
+			
+				/*
+				 * Rebind the Aggregate to the relation of Grouping Variable
+				 */
+				((GroupingVaribale)aggre.getVariable().getBelong()).getAll_aggregates().add((AggregateExpression)aggre);
+				
 				String columName = aggre.getVariable().getName();
+				if(records.get(aggre.getConvertionName()) != null) {
+					continue;
+				}
+				
 				String type = find_type(columName, connection);
 				if(((AggregateExpression)aggre).getOperator().equals(AggregateOperator.AVERAGE)) {
 					String[] s = ((AggregateExpression)aggre).getSumCountName().split(",");
-					str += "\tpublic " + type + " " + s[0] + ";\n";
-					str += "\tpublic " + type + " " + s[1] + ";\n";
+					if(records.get(s[0]) == null) {
+						str += "\tpublic " + type + " " + s[0] + ";\n";
+						records.put(s[0], s[0]);
+					}
+					if(records.get(s[1]) == null) {
+						str += "\tpublic " + type + " " + s[1] + ";\n";
+						records.put(s[1], s[0]);
+					}
 				}
 				str += "\tpublic " + type + " " + aggre.getConvertionName() + ";\n";
+				records.put(aggre.getConvertionName(), aggre.getConvertionName());
 		}
 
 		str += "}\n";
@@ -140,6 +177,9 @@ public class CodeGenerator {
 		
 	}
 	
+	/**
+	 * getAllAggregateExpression from SQL
+	 */
 	private void getAllAggregateExpression(AggregateExpressionVisitorImpl visitor ) {
 		/* find the Aggression Expression and Add it to the set*/
 		for(Expression exp : sqlsentence.getSuchThatElement().getSuch_that_expressions()) {
@@ -157,6 +197,15 @@ public class CodeGenerator {
 		}
 	}
 	
+	/**
+	 * get Particular Aggregation from SQL
+	 */
+	private void getParticularAggregateExpression(AggregateExpressionVisitorImpl visitor, List<Expression> particulars ) {
+		/* find the Aggression Expression and Add it to the set*/
+		for(Expression exp : particulars) {
+			visitor.visit(exp);
+		}
+	}
 	
 	/**
 	 * generateMF_Main
@@ -200,30 +249,17 @@ public class CodeGenerator {
 		str +=			GeneratorHelper.gl("try {", 2);
 		str +=			GeneratorHelper.gl("conn = DriverManager.getConnection(url, usr, pwd);", 3);
 		str +=			GeneratorHelper.gl("Statement stmt = conn.createStatement(); ", 3);
-		str +=			GeneratorHelper.gl("ResultSet rs = stmt.executeQuery(\"SELECT * FROM Sales\");", 3);
 		str +=			GeneratorHelper.gl("List<MFtable> list = new ArrayList<MFtable>();", 3);
-		str +=			GeneratorHelper.gc("   SCAN 1 ", 3);
-		str +=			GeneratorHelper.gl("while (rs.next())  {", 3);
-		str +=			GeneratorHelper.gl("boolean is_find = false;", 4);
-		str +=			GeneratorHelper.gl("int position = 0;", 4);
 		str +=			GeneratorHelper.BLANK;
-		str +=			GeneratorHelper.gc("  THIS IS WHERE CONDITION", 4);
-		str +=			generateWhereCondition(4);
-		str +=			GeneratorHelper.gl("for(int j = 0; j < list.size(); j++) {", 4);
-		str +=			GeneratorHelper.ind(5) + funMFtableEqualTupe();
-		str +=			GeneratorHelper.gl("position = j;", 6);
-		str +=			GeneratorHelper.gl("is_find = true;", 6);
-		str +=			GeneratorHelper.gl("break;", 6);
-		str +=			GeneratorHelper.gl("}", 5);
-		str +=			GeneratorHelper.gl("}", 4);
 		str +=			GeneratorHelper.BLANK;
-		str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE", 4);
-		str +=			GeneratorHelper.gl("if(is_find) {", 4);
-		str +=			updateMFTable_Ifexist(5);
-		str +=			GeneratorHelper.gl("} else { ", 4);
-		str += 			updateMFTable_IfnonExist(5);
-		str +=			GeneratorHelper.gl("}", 4);
-		str +=			GeneratorHelper.gl("}", 3);
+		//------------- Where Such Part
+		current_step = 0;
+		str += 			generateScan();
+		str +=			GeneratorHelper.BLANK;
+		//------------- Having Part
+		current_step = 1;
+		str +=			GeneratorHelper.gc("  Having Part", 3);
+		str +=          generateHavingCondition(3);
 		str +=			GeneratorHelper.gc("  This part is used to print the result", 3);
 		str +=			getPrintResultCode(3);
 		str +=			GeneratorHelper.gl("conn.close();\n", 3);
@@ -238,6 +274,63 @@ public class CodeGenerator {
 		file.close();
 	}
 	
+	private String generateScan() throws SQLException {
+		String str = "";
+		for(Collection<AdjacentNode<GroupingVaribale>> shechdule : relationship) {
+			List<Expression> schedule_expressions = new ArrayList<Expression>();
+			List<GroupingVaribale> shedule_variable = new ArrayList<GroupingVaribale>();
+			
+			for(AdjacentNode<GroupingVaribale> group_variable : shechdule) {
+				Expression ls = this.relationBuilder.getSuchThatBlockExpressionByVariable(group_variable.getValue());
+				schedule_expressions.add(ls);
+				shedule_variable.add(group_variable.getValue());
+			}
+			
+			
+			str +=			GeneratorHelper.gl("ResultSet rs" + current_scan +" = stmt.executeQuery(\"SELECT * FROM Sales\");", 3);
+			str +=			GeneratorHelper.gc("   SCAN "+ current_scan+ "  =>  " + shechdule.toString(), 3);
+			str +=			GeneratorHelper.gl("while (rs"+ current_scan +".next())  {", 3);
+			str +=			GeneratorHelper.gl("boolean is_find = false;", 4);
+			str +=			GeneratorHelper.gl("int position = 0;", 4);
+			str +=			GeneratorHelper.BLANK;
+			str +=			GeneratorHelper.gc("  THIS IS WHERE CONDITION", 4);
+			str +=			generateWhereCondition(4);
+			str +=			GeneratorHelper.gc("  lookup from MF_TABLE", 4);
+			str +=			GeneratorHelper.gl("for(int j = 0; j < list.size(); j++) {", 4);
+			str +=			GeneratorHelper.ind(5) + funMFtableEqualTupe();
+			str +=			GeneratorHelper.gl("position = j;", 6);
+			str +=			GeneratorHelper.gl("is_find = true;", 6);
+			str +=			GeneratorHelper.gl("break;", 6);
+			str +=			GeneratorHelper.gl("}", 5);
+			str +=			GeneratorHelper.gl("}", 4);
+			str +=			GeneratorHelper.BLANK;
+			str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE", 4);
+			str +=			GeneratorHelper.gl("if(is_find) {", 4);
+			str +=			GeneratorHelper.gc("  SuchThat Condition => " + shechdule.toString() , 5);
+			for(int z = 0; z < schedule_expressions.size() ; z++) {
+			str +=			updateMFTable_Ifexist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z), 5);
+			}
+			
+			str +=			GeneratorHelper.gl("} else { ", 4);
+			str += 			generateMFTable_Header_Assignment(5);
+			for(int z = 0; z < schedule_expressions.size() ; z++) {
+			str +=			updateMFTable_IfnonExist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z),5);
+			}
+			str += 			GeneratorHelper.ind(5) + "list.add(mf_entry);\n";
+			str +=			GeneratorHelper.gl("}", 4);
+			str +=			GeneratorHelper.gl("}", 3);
+			str +=			GeneratorHelper.BLANK;
+			str +=			GeneratorHelper.BLANK;
+			current_scan++;
+		}
+		
+		
+		
+		
+		
+		return str;
+	}
+	
 	private String funMFtableEqualTupe() throws SQLException {
 		GroupByElement element = sqlsentence.getGroupByElement();
 		String outputConditions = "";
@@ -246,11 +339,11 @@ public class CodeGenerator {
 			AttributeVariable current = attr_iterator.next();
 			String type = find_type(current.getName(), connection);
 			if(type.equals(Constants.INTERGER_TYPE)) {
-				outputConditions += "list.get(j)." + current.getName() + " == rs.getInt(\"" + current.getName() + "\") ";
+				outputConditions += "list.get(j)." + current.getName() + " == rs" + current_scan + ".getInt(\"" + current.getName() + "\") ";
 				
 			}
 			if(type.equals(Constants.STRING_TYPE)) {
-				outputConditions += "list.get(j)." + current.getName() + ".equals(rs.getString(\"" + current.getName() + "\")) ";
+				outputConditions += "list.get(j)." + current.getName() + ".equals(rs" + current_scan + ".getString(\"" + current.getName() + "\")) ";
 				
 			}
 			if(attr_iterator.hasNext()) {
@@ -260,36 +353,41 @@ public class CodeGenerator {
 		return "if(" + outputConditions + ") {\n";
 	}
 	
-	private String updateMFTable_IfnonExist(int incent) throws SQLException {
-		String mfTable = GeneratorHelper.ind(incent) + "MFtable mf_entry = new MFtable();\n";
-		AggregateExpressionVisitorImpl visitor = new AggregateExpressionVisitorImpl();
-		/*Get all aggregateExpression*/
-		getAllAggregateExpression(visitor);
-		/*
-		 * Grouping Attributes
-		 */
+	private String generateMFTable_Header_Assignment(int incent) throws SQLException {
+		String mfTable_header = GeneratorHelper.ind(incent) + "MFtable mf_entry = new MFtable();\n";
 		for(AttributeVariable variable : sqlsentence.getGroupByElement().getGrouping_attributes()) {
 			String fragment = "";
 			if(find_type(variable.getName(), connection).equals(Constants.STRING_TYPE)) {
-				fragment = GeneratorHelper.ind(incent) + "mf_entry." +  variable.getName() + " = " + "rs.getString(\"" + variable.getName() + "\");\n";
+				fragment = GeneratorHelper.ind(incent) + "mf_entry." +  variable.getName() + " = " + "rs" + current_scan + ".getString(\"" + variable.getName() + "\");\n";
 			}
 			if(find_type(variable.getName(), connection).equals(Constants.INTERGER_TYPE)) {
-				fragment = GeneratorHelper.ind(incent) + "mf_entry." +  variable.getName() + " = " + "rs.getInt(\"" + variable.getName() + "\");\n";
+				fragment = GeneratorHelper.ind(incent) + "mf_entry." +  variable.getName() + " = " + "rs" + current_scan + ".getInt(\"" + variable.getName() + "\");\n";
 			}
-			mfTable	+= fragment;
+			mfTable_header	+= fragment;
 			 
 		}
+		return mfTable_header;
+	}
+	
+	private String updateMFTable_IfnonExist(GroupingVaribale current_variable, ComparisonAndComputeExpression current_shedule_expressions, int incent) throws SQLException {
+//		AggregateExpressionVisitorImpl visitor = new AggregateExpressionVisitorImpl();
+		/*Get all aggregateExpression*/
+//		getAllAggregateExpression(visitor);
+		/*
+		 * Grouping Attributes
+		 */
+		String mfTable = "";
 		
 		/*
 		 * Aggregate Operator
 		 */
-		for(AggregateExpression expression : visitor.getAggregate_expression()) {
+		for(AggregateExpression expression : current_variable.getAll_aggregates()) {
 			// AVG
 			if(expression.getOperator().equals(AggregateOperator.AVERAGE)) {
 				String[] strs = expression.getSumCountName().split(",");
 				//sum
 				String fragment1 = GeneratorHelper.ind(incent) + "mf_entry." + 
-								 strs[0] + " = " + "rs.getInt(\"" + expression.getVariable().getName() + "\");\n";
+								 strs[0] + " = " + "rs" + current_scan + ".getInt(\"" + expression.getVariable().getName() + "\");\n";
 				//count
 				String fragment2 = GeneratorHelper.ind(incent) + "mf_entry." + 
 								 strs[1] + " = 1;\n";
@@ -302,13 +400,13 @@ public class CodeGenerator {
 			if(expression.getOperator().equals(AggregateOperator.MAX)) {
 				
 				String fragment1 = GeneratorHelper.ind(incent) + "mf_entry." + 
-								 expression.getConvertionName() + " = " + "rs.getInt(\"" + expression.getVariable().getName() + "\")" + ";\n";
+								 expression.getConvertionName() + " = " + "rs" + current_scan + ".getInt(\"" + expression.getVariable().getName() + "\")" + ";\n";
 				mfTable += fragment1;
 			}
 			//count min
 			if(expression.getOperator().equals(AggregateOperator.MIN)) {
 				String fragment1 = GeneratorHelper.ind(incent) + "mf_entry." + 
-						 expression.getConvertionName() + " = " + "rs.getInt(\"" + expression.getVariable().getName() + "\")" + ";\n";
+						 expression.getConvertionName() + " = " + "rs" + current_scan + ".getInt(\"" + expression.getVariable().getName() + "\")" + ";\n";
 				mfTable += fragment1;
 			}
 			//count count
@@ -322,30 +420,43 @@ public class CodeGenerator {
 			if(expression.getOperator().equals(AggregateOperator.SUM)) {
 				//sum
 				String fragment1 = GeneratorHelper.ind(incent) + "mf_entry." + 
-						 expression.getConvertionName() + " = " + "rs.getInt(\"" + expression.getVariable().getName() + "\")" + ";\n";
+						 expression.getConvertionName() + " = " + "rs" + current_scan + ".getInt(\"" + expression.getVariable().getName() + "\")" + ";\n";
 				mfTable += fragment1;
 			}
 		} 
 		
-		return mfTable + GeneratorHelper.ind(incent) + "list.add(mf_entry);\n";
+		return mfTable;
 	}
 	
-	private String updateMFTable_Ifexist(int incent) {
-		String mfTable = "";
-		AggregateExpressionVisitorImpl visitor = new AggregateExpressionVisitorImpl();
+	private String updateMFTable_Ifexist(GroupingVaribale current_variable, ComparisonAndComputeExpression current_shedule_expressions, int incent) {
+//		AggregateExpressionVisitorImpl visitor = new AggregateExpressionVisitorImpl();
 		/*Get all aggregateExpression*/
-		getAllAggregateExpression(visitor);
-		
-		for(AggregateExpression expression : visitor.getAggregate_expression()) {
+//		getParticularAggregateExpression(visitor, current_shedule_expressions);
+		String mfTable = GeneratorHelper.ind(incent) + "if(";
+		String s = generateStringFromCondition(current_shedule_expressions.getLeft(), current_shedule_expressions.getRight(), current_shedule_expressions.getOperator());
+		mfTable   += ( s + ") {\n ");
+		incent++;
+		boolean sum_count = false;
+		boolean count_count = false;
+		for(AggregateExpression expression : current_variable.getAll_aggregates()) {
 			// AVG
 			if(expression.getOperator().equals(AggregateOperator.AVERAGE)) {
 				String[] strs = expression.getSumCountName().split(",");
+				String fragment1 = "";
+				String fragment2 = "";
 				//sum
-				String fragment1 = GeneratorHelper.ind(incent) + "list.get(position)." + 
-								 strs[0] + " = " + "list.get(position)." + strs[0] + " + rs.getInt(\"" + expression.getVariable().getName() + "\");\n";
+				if(!sum_count) {
+					fragment1 = GeneratorHelper.ind(incent) + "list.get(position)." + 
+							 strs[0] + " = " + "list.get(position)." + strs[0] + " + rs" + current_scan + ".getInt(\"" + expression.getVariable().getName() + "\");\n";
+					sum_count = true;
+				}
 				//count
-				String fragment2 = GeneratorHelper.ind(incent) + "list.get(position)." + 
-								 strs[1] + " = " + "list.get(position)." + strs[1] + " + 1;\n";
+				if(!count_count) {
+					fragment2 = GeneratorHelper.ind(incent) + "list.get(position)." + 
+							 strs[1] + " = " + "list.get(position)." + strs[1] + " + 1;\n";
+					count_count = true;
+				}
+
 				//sum / count
 				String fragment3 = GeneratorHelper.ind(incent) + "list.get(position)." +
 								   expression.getConvertionName() + " = " + 
@@ -370,21 +481,23 @@ public class CodeGenerator {
 				mfTable += fragment1;
 			}
 			//count count
-			if(expression.getOperator().equals(AggregateOperator.COUNT)) {
+			if(expression.getOperator().equals(AggregateOperator.COUNT) && !count_count) {
 				//count
 				String fragment1 = GeneratorHelper.ind(incent) + "list.get(position)." + 
 								 expression.getConvertionName() + " = " + "list.get(position)." + expression.getConvertionName() + " + 1;\n";
 				mfTable += fragment1;
+				count_count = true;
 			}
 			//count sum
-			if(expression.getOperator().equals(AggregateOperator.SUM)) {
+			if(expression.getOperator().equals(AggregateOperator.SUM) && !sum_count) {
 				//sum
 				String fragment1 = GeneratorHelper.ind(incent) + "list.get(position)." + 
-						expression.getConvertionName() + " = " + "list.get(position)." + expression.getConvertionName() + " + rs.getInt(" + expression.getVariable().getName() + ");\n";
+						expression.getConvertionName() + " = " + "list.get(position)." + expression.getConvertionName() + " + rs.getInt(\"" + expression.getVariable().getName() + "\");\n";
 				mfTable += fragment1;
+				sum_count = true;
 			}
 		} 
-		
+		mfTable += GeneratorHelper.ind(incent-1) + "}\n";
 		return mfTable;
 	}
 	
@@ -440,6 +553,26 @@ public class CodeGenerator {
 		return result;
 	}
 	
+	private String generateHavingCondition(int incent) {
+		String result = GeneratorHelper.ind(incent) + "Iterator<MFtable> result_having = list.iterator();\n";
+		result  +=  GeneratorHelper.ind(incent) + "while(result_having.hasNext()) {\n";
+		incent++;
+		result  +=  GeneratorHelper.ind(incent) + "MFtable mf_entry = result_having.next();\n";
+		result  +=  GeneratorHelper.ind(incent) + "if(!(";
+		HavingElement element = sqlsentence.getHavingElement();
+		Iterator<Expression> express_iterator = element.getHaving_expressions().iterator();		
+		while(express_iterator.hasNext()) {
+			ComparisonAndComputeExpression express = (ComparisonAndComputeExpression)express_iterator.next();
+			result += generateStringFromCondition(express.getLeft(), express.getRight(), express.getOperator());
+		}
+		
+		result += " )) { \n";
+		result += GeneratorHelper.ind(incent+1) + "result_having.remove();\n";
+		result += GeneratorHelper.ind(incent) + "}\n";
+		result += GeneratorHelper.ind(incent-1) + "}\n";
+		return result;
+	}
+	
 	
 	private String generateStringFromCondition(Expression left, Expression right, ComparisonAndComputeOperator operator) {
 		String final_result = "";
@@ -455,18 +588,53 @@ public class CodeGenerator {
 		if(left instanceof SimpleExpression && right instanceof SimpleExpression) {
 			final_result = generateStringFromCondition((SimpleExpression)left, (SimpleExpression)right, operator);
 		}
+		if(left instanceof SimpleExpression && right instanceof AggregateExpression) {
+			final_result = generateStringFromCondition((SimpleExpression)left, (AggregateExpression)right, operator);
+		}
+		if(left instanceof AggregateExpression && right instanceof SimpleExpression) {
+			final_result = generateStringFromCondition((AggregateExpression)left, (SimpleExpression)right, operator);
+		}
+		if(left instanceof AggregateExpression && right instanceof IntegerExpression) {
+			final_result = generateStringFromCondition((AggregateExpression)left, (IntegerExpression)right, operator);
+		}
+		if(left instanceof IntegerExpression && right instanceof AggregateExpression) {
+			final_result = generateStringFromCondition((IntegerExpression)left, (AggregateExpression)right, operator);
+		}
 		return final_result;
 	}
 	
+	private String generateStringFromCondition(AggregateExpression left, IntegerExpression right, ComparisonAndComputeOperator operator) {
+		String fragment = "list.get(position)." + left.getConvertionName() + " " + operator.getJava_name() + " " + right.getValue();
+		if(current_step == 1) {
+			fragment ="mf_entry." + left.getConvertionName() + " " + operator.getJava_name() + " " + right.getValue();
+		}
+		return fragment;
+	}
+	
+	private String generateStringFromCondition(IntegerExpression left, AggregateExpression right, ComparisonAndComputeOperator operator) {
+		String fragment = left.getValue() + " " + operator.getJava_name() + " " + right.getConvertionName();
+		return fragment;
+	}
+	
 	private String generateStringFromCondition(SimpleExpression left, SimpleExpression right, ComparisonAndComputeOperator operator) {
-		String fragment = "rs.getString(\"" + left.getVariable().getName() +"\").equals(" + right.getVariable().getName() + ")";
+		String fragment = "rs" + current_scan +".getString(\"" + left.getVariable().getName() +"\").equals(" + right.getVariable().getName() + ")";
+		if(current_step == 1) {
+			fragment = "mf_entry." + left.getVariable().getName() +".equals(" + right.getVariable().getName() + ")";
+		}
 		return fragment;
 	}
 	private String generateStringFromCondition(SimpleExpression left, AggregateExpression right, ComparisonAndComputeOperator operator) {
-		return null;
+		String fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() +"\") " + operator.getJava_name() +
+				" list.get(position)." + right.getConvertionName();
+		return fragment;
+	}
+	private String generateStringFromCondition(AggregateExpression left, SimpleExpression right, ComparisonAndComputeOperator operator) {
+		String fragment = "list.get(position)."  + left.getConvertionName() + " " + operator.getJava_name() +
+				 " rs" + current_scan +".getInt(\"" + right.getVariable().getName() +"\")";
+		return fragment;
 	}
 	private String generateStringFromCondition(SimpleExpression left, IntegerExpression right, ComparisonAndComputeOperator operator) {
-		String fragment = "rs.getInt(\"" + left.getVariable() +"\") " + operator.getJava_name() + " " + right.getValue();
+		String fragment = "rs"+ current_scan +".getInt(\"" + left.getVariable().getName() +"\") " + operator.getJava_name() + " " + right.getValue();
 		return fragment;
 	}
 	private String generateStringFromCondition(ComparisonAndComputeExpression left, ComparisonAndComputeExpression right, ComparisonAndComputeOperator operator) {

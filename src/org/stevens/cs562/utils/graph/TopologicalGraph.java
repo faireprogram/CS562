@@ -77,19 +77,6 @@ public class TopologicalGraph<K> {
 		return results;
 	}
 
-	/**
-	 * @param capacity
-	 * @return
-	 */
-	private List<IndegreeElement> buildEmptyIndegreeArray(int capacity) {
-		List<IndegreeElement> elements = new ArrayList<TopologicalGraph<K>.IndegreeElement>();
-		for(int i = 0; i < capacity; i++) {
-			elements.add(new IndegreeElement());
-		}
-		return elements;
-	}
-
-
 	private void modifyConnectionNum(
 			List<IndegreeElement> indegree,
 			Collection<AdjacentNode<K>> edgeVetex, int addValue) {

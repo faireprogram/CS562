@@ -109,6 +109,16 @@ public class AggregateExpression extends AbstractExpression{
 		   str +=  "_" + this.getVariable().getBelong().getAlias() + "_" + getVariable().getName() + "_" + "count";
 		   return str;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.getVariable().hashCode() *5 + this.getOperator().hashCode() * 31;
+	}
+	
+	
 	
 	
 	

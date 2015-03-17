@@ -21,5 +21,4 @@ public enum AggregateOperator {
 	public String toString() {
 		return name;
 	}
-	
 }

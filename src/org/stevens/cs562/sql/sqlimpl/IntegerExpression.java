@@ -51,4 +51,5 @@ public class IntegerExpression extends AbstractExpression{
 	public String toString() {
 		return String.valueOf(value);
 	}
+	
 }

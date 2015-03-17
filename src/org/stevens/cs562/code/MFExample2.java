@@ -5,7 +5,7 @@ import java.util.List;
 
 /*
 
-select FromAC, FromTel,	X.names as names, count(X.*), count(Y.*), 
+select FromAC, FromTel, count(X.*), count(Y.*), 
 from CALLS
 group by FromAC, FromTel : X, Y
 suchthat 

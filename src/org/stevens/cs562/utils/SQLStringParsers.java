@@ -123,7 +123,15 @@ public class SQLStringParsers {
 		String[] strings = sql.split(",");
 		
 		for(int i = 0; i < strings.length; i++) {
-			element.getSuch_that_expressions().add(generateComputeOrComparisonExpression(strings[i], element.getSelfSentce().getGrouping_variable_dic()));
+			List<String> list_string = StringBuilder.splitStringFromParenthesis(strings[i]);
+			if(list_string.size() == 0) {
+				element.getSuch_that_expressions().add(generateComputeOrComparisonExpression(strings[i], element.getSelfSentce().getGrouping_variable_dic()));
+			} else {
+				for(String str : list_string) {
+					element.getSuch_that_expressions().add(generateComputeOrComparisonExpression(str, element.getSelfSentce().getGrouping_variable_dic()));
+				}
+			}
+			
 		}
 		System.out.println(element);
 	}
@@ -244,9 +252,9 @@ public class SQLStringParsers {
 			ComparisonAndComputeExpression current = gernerateComparisonAndComputeExpression(sql.substring(start, end), dic);
 			
 			start = matcher.end();
-			if(prev_sign == null || prev_sign.equals(ComparisonAndComputeOperator.AND.getSymbol())) {
+			if(prev_sign == null || prev_sign.toLowerCase().equals(ComparisonAndComputeOperator.AND.getSymbol())) {
 				previous = compositeComparisonAndComputeExpression(previous, current, ComparisonAndComputeOperator.AND);
-			} else if(prev_sign == null || prev_sign.equals(ComparisonAndComputeOperator.OR.getSymbol())) {
+			} else if(prev_sign == null || prev_sign.toLowerCase().equals(ComparisonAndComputeOperator.OR.getSymbol())) {
 				previous = compositeComparisonAndComputeExpression(previous, current, ComparisonAndComputeOperator.OR);
 			}
 			if(previous == null) {
@@ -255,10 +263,10 @@ public class SQLStringParsers {
 		}
 		if( start != 0) {
 			ComparisonAndComputeExpression current = gernerateComparisonAndComputeExpression(sql.substring(start, sql.length()), dic);
-			if(operator_sign.equals(ComparisonAndComputeOperator.AND.getSymbol())) {
+			if(operator_sign.toLowerCase().equals(ComparisonAndComputeOperator.AND.getSymbol())) {
 				previous = compositeComparisonAndComputeExpression(previous, current, ComparisonAndComputeOperator.AND);
 			}
-			if(operator_sign.equals(ComparisonAndComputeOperator.OR.getSymbol())) {
+			if(operator_sign.toLowerCase().equals(ComparisonAndComputeOperator.OR.getSymbol())) {
 				previous = compositeComparisonAndComputeExpression(previous, current, ComparisonAndComputeOperator.OR);
 			}
 		} else { // it's a single expression e.g year = 1997

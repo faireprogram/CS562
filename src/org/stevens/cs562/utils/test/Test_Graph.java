@@ -40,10 +40,10 @@ public class Test_Graph {
 		list.add(C);
 		list.add(D);
 		
-		/*
-		 *   A -> B -> C
+		/*        C
+		 *   A -> B
 		 *   B -> C
-		 *   C -> B
+		 *   C -> D
 		 *   D
 		 */
 //		list.get(index)

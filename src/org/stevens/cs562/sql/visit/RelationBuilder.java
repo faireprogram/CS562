@@ -1,5 +1,6 @@
 package org.stevens.cs562.sql.visit;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -8,9 +9,12 @@ import org.stevens.cs562.sql.Variable;
 import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
 import org.stevens.cs562.sql.sqlimpl.GroupByElement;
 import org.stevens.cs562.sql.sqlimpl.GroupingVaribale;
+import org.stevens.cs562.sql.sqlimpl.IntegerExpression;
+import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
 import org.stevens.cs562.sql.sqlimpl.SqlSentence;
 import org.stevens.cs562.sql.sqlimpl.SuchThatElement;
 import org.stevens.cs562.sql.visit.RelationBuilderVisitor.Pair;
+import org.stevens.cs562.utils.StringBuilder;
 import org.stevens.cs562.utils.graph.AdjacentList;
 import org.stevens.cs562.utils.graph.AdjacentNode;
 import org.stevens.cs562.utils.graph.AdjacentNodeImpl;
@@ -72,24 +76,78 @@ public class RelationBuilder {
 	// At least expression is AggregateExpression
 	private void dealWithAggregateExpression(Expression expression1, Expression expression2, AdjacentList<GroupingVaribale, AdjacentNode<GroupingVaribale>> list) {
 		// prior_less_exp depends on prior_exp
-		Expression prior_exp = null;
-		Expression prior_less_exp = null;
+		if(expression1 instanceof IntegerExpression || expression2 instanceof IntegerExpression) {
+			return;
+		}
+		Expression avg_exp = null;
+		Expression common_exp = null;
 		if(expression1 instanceof AggregateExpression) {
-			prior_exp = expression1;
-			prior_less_exp = expression2;
-		}
-		if(expression2 instanceof AggregateExpression) {
-			prior_less_exp = expression1;
-			prior_exp = expression2;
+			avg_exp = expression1;
+			common_exp = expression2;
+		} else if(expression2 instanceof AggregateExpression) {
+			common_exp = expression1;
+			avg_exp = expression2;
 		}
 		
-		Variable prior_variable = prior_exp.getVariable().getBelong();
-		Variable prior_less_variable = prior_less_exp.getVariable().getBelong();
+		Variable avg_variable = avg_exp.getVariable().getBelong();
+		Variable common_variable = common_exp.getVariable().getBelong();
 		
-		AdjacentNode<GroupingVaribale> node_prior = list.get((GroupingVaribale)prior_variable);
-		AdjacentNode<GroupingVaribale> node_less_prior = list.get((GroupingVaribale)prior_less_variable);
-		node_less_prior.getEdgeVetex().add(node_prior);
+		AdjacentNode<GroupingVaribale> node_avg = list.get((GroupingVaribale)avg_variable);
+		AdjacentNode<GroupingVaribale> node_common = list.get((GroupingVaribale)common_variable);
+		node_avg.getEdgeVetex().add(node_common);
+		
 		
 	}
+	
+	/**
+	 * Get All pair From the list by the specified Aggregation
+	 */
+	public Expression getSuchThatBlockExpressionByVariable(GroupingVaribale group_variable) {
+		RelationBuilderVisitor innerVisitor = new RelationBuilderVisitor();
+		Expression final_resul = null;
+		SuchThatElement suchThatElement = sqlsetence.getSuchThatElement();
+		for(Expression expresion : suchThatElement.getSuch_that_expressions()) {
+			boolean find = false;
+			innerVisitor.getPairs().clear();
+			expresion.accept(innerVisitor);
+			
+			/*
+			 *  analyze the pair
+			 */
+			for(Pair pair : innerVisitor.getPairs()) {
+				if(pair.getLeft() instanceof  AggregateExpression) { // its dependecy should be it, So group_variable should equal right
+					if(StringBuilder.isEqual(pair.getRight().getVariable().getBelong().getName(), group_variable.getName())) {
+						find = true;
+						break;
+					}
+				} else if(pair.getRight() instanceof  AggregateExpression) { // its dependecy should be it, So group_variable should equal right
+					if(StringBuilder.isEqual(pair.getLeft().getVariable().getBelong().getName(), group_variable.getName())) {
+						find = true;
+						break;
+					}
+				} else if(pair.getLeft() instanceof SimpleExpression) {
+					if(StringBuilder.isEqual(pair.getLeft().getVariable().getBelong().getName(), group_variable.getName())) {
+						find = true;
+						break;
+					}
+				} else if(pair.getRight() instanceof SimpleExpression) {
+					if(StringBuilder.isEqual(pair.getRight().getVariable().getBelong().getName(), group_variable.getName())) {
+						find = true;
+						break;
+					}
+				}
+			}
+			
+			if(find) {
+				final_resul = expresion;
+				break;
+			}
+			
+		}
+		
+		
+		return final_resul;
+	}
+	
 	
 }

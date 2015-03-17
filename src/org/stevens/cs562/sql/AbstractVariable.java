@@ -103,6 +103,14 @@ public abstract class AbstractVariable implements Variable{
 		}
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.getName().hashCode() * 31;
+	}
 	
 	
 	

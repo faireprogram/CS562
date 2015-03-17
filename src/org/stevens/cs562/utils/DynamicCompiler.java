@@ -22,10 +22,12 @@ import javax.tools.ToolProvider;
 
 public class DynamicCompiler {
 
-	String path = Constants.OUT_PUT_PATH;
-	String compile_path = path + "\\output\\class";
+	String path  ;
+	String compile_path;
 	
-	public DynamicCompiler() {
+	public DynamicCompiler() throws IOException {
+		this.path = ResourceHelper.getValue("output");
+		this.compile_path = this.path + "\\output\\class";
 	}
 	
 	public void compileAndRun() {
