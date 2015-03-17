@@ -1,0 +1,5 @@
+	select prod, month, avg( X.quant)
+	from Sales
+	where year=¡®1997¡¯
+	group by prod, month : X
+	such that  X.year > 1991 and X.year <= 1997

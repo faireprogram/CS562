@@ -4,19 +4,24 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Properties;
 
 import org.stevens.cs562.utils.test.Test_SQL_Parser;
 
+
 public class ResourceHelper {
 
+	private static Properties prop;
+	
 	public static String readFromFile() {
 		String result = "";
 		 
 		BufferedReader br = null; 
-		
 		try {
-			URL url = Test_SQL_Parser.class.getClassLoader().getResource("Sql1");
+			
+			URL url = Test_SQL_Parser.class.getClassLoader().getResource(getProperties().getProperty("script_path"));
 			String sCurrentLine = "";
 			br = new BufferedReader(new FileReader(url.getPath()));
 			
@@ -34,6 +39,19 @@ public class ResourceHelper {
 
 		return result;
 
+	}
+	
+	public static Properties getProperties() throws IOException {
+		if(prop == null) {
+			prop = new Properties();
+			InputStream stream = Test_SQL_Parser.class.getClassLoader().getResourceAsStream("configure.properties");
+			prop.load(stream);
+		}
+		return prop;
+	}
+	
+	public static String getValue(String key) throws IOException {
+		return getProperties().getProperty(key);
 	}
 
 }

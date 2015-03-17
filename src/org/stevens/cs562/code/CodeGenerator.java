@@ -26,6 +26,7 @@ import org.stevens.cs562.sql.sqlimpl.WhereElement;
 import org.stevens.cs562.sql.visit.AggregateExpressionVisitorImpl;
 import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.GeneratorHelper;
+import org.stevens.cs562.utils.ResourceHelper;
 
 public class CodeGenerator {
 
@@ -34,21 +35,28 @@ public class CodeGenerator {
 	 */
 	SqlSentence sqlsentence;
 	
-	private String usr = "postgres";
-	private String psw = "zw198787";
-	private String url = "jdbc:postgresql://localhost:5432/test";
+//	private String usr = "postgres";
+//	private String psw = "zw198787";
+//	private String url = "jdbc:postgresql://localhost:5432/test";
+	
+	private String usr;
+	private String psw;
+	private String url;
 	/**
 	 * 
 	 */
 	Connection connection;
 	
-	public CodeGenerator(SqlSentence sqlsentence, Connection connect) {
+	public CodeGenerator(SqlSentence sqlsentence, Connection connect) throws IOException {
 		this.sqlsentence = sqlsentence;
 		this.connection = connect;
+		this.usr = ResourceHelper.getValue("usrname");
+		this.psw = ResourceHelper.getValue("password");
+		this.url = ResourceHelper.getValue("postsql_url");
 	}
 
-	public void generate() {
-		String path = Constants.OUT_PUT_PATH;
+	public void generate() throws IOException {
+		String path = ResourceHelper.getValue("output");
 		try {
 			FileOutputStream mf_table = new FileOutputStream(path +Constants.GENERATE_CODE_MF_TABLE + ".java");
 			generateMF_Table(mf_table);
@@ -163,11 +171,11 @@ public class CodeGenerator {
 		str += "import java.sql.DriverManager;\n";
 		str += "import java.sql.ResultSet;\n";
 		str += "import java.sql.SQLException;\n";
-		str += "import java.sql.Statement;\n\n";
-		str += "import java.util.ArrayList;";
-		str += "import java.util.Iterator;";
-		str += "import java.util.List;";
-		
+		str += "import java.sql.Statement;\n";
+		str += "import java.util.ArrayList;\n";
+		str += "import java.util.Iterator;\n";
+		str += "import java.util.List;\n\n";
+		str +=  GeneratorHelper.gc("   THIS IS AUTOMATICALLY GENERATE CODE", 0);
 		str += "public class "+ Constants.GENERATE_CODE_MF_MAIN +" {\n";
 		str +=  	"\tpublic static void main(String[] args) {\n";
 		str += 			"\t\t" + Constants.GENERATE_CODE_MF_TABLE+"[] sri= new " +Constants.GENERATE_CODE_MF_TABLE + "[500];\n";
@@ -209,6 +217,7 @@ public class CodeGenerator {
 		str +=			GeneratorHelper.gl("}", 5);
 		str +=			GeneratorHelper.gl("}", 4);
 		str +=			GeneratorHelper.BLANK;
+		str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE", 4);
 		str +=			GeneratorHelper.gl("if(is_find) {", 4);
 		str +=			updateMFTable_Ifexist(5);
 		str +=			GeneratorHelper.gl("} else { ", 4);
@@ -217,9 +226,10 @@ public class CodeGenerator {
 		str +=			GeneratorHelper.gl("}", 3);
 		str +=			GeneratorHelper.gc("  This part is used to print the result", 3);
 		str +=			getPrintResultCode(3);
-		str +=			GeneratorHelper.gl("} catch (SQLException e) {", 3);
-		str +=			GeneratorHelper.gl("e.printStackTrace();", 4);
-		str +=			GeneratorHelper.gl("}", 3);  
+		str +=			GeneratorHelper.gl("conn.close();\n", 3);
+		str +=			GeneratorHelper.gl("} catch (SQLException e) {", 2);
+		str +=			GeneratorHelper.gl("e.printStackTrace();", 3);
+		str +=			GeneratorHelper.gl("}", 2);  
 		str += "\t}\n";
 		str += "}\n";
 		file.write(str.getBytes(), 0, str.length());
@@ -442,12 +452,15 @@ public class CodeGenerator {
 		if((left instanceof ComparisonAndComputeExpression && right instanceof ComparisonAndComputeExpression)) {
 			final_result = generateStringFromCondition((ComparisonAndComputeExpression)left, (ComparisonAndComputeExpression)right, operator);
 		}
-		
+		if(left instanceof SimpleExpression && right instanceof SimpleExpression) {
+			final_result = generateStringFromCondition((SimpleExpression)left, (SimpleExpression)right, operator);
+		}
 		return final_result;
 	}
 	
 	private String generateStringFromCondition(SimpleExpression left, SimpleExpression right, ComparisonAndComputeOperator operator) {
-		return null;
+		String fragment = "rs.getString(\"" + left.getVariable().getName() +"\").equals(" + right.getVariable().getName() + ")";
+		return fragment;
 	}
 	private String generateStringFromCondition(SimpleExpression left, AggregateExpression right, ComparisonAndComputeOperator operator) {
 		return null;

@@ -1,4 +1,4 @@
-	select prod, month, avg(quant), max(quant), min(quant)
+	select avg(quant), prod, month
 	from Sales
-	where year= 1997 or month =1
+	where year= 1997 and prod = "Milk"
 	group by prod, month
