@@ -12,7 +12,7 @@ public class FromElement extends AbstractSqlElement{
 	}
 
 	/**
-	 * @return the table_name
+	 * @return the table_name 
 	 */
 	public String getTable_name() {
 		return table_name;
