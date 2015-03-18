@@ -297,38 +297,30 @@ public class CodeGenerator {
 			 * IF ONLY GROUP BY ELEMENT
 			 */
 			
-				str +=			GeneratorHelper.gc("  lookup from MF_TABLE", 4);
-				str +=			GeneratorHelper.gl("for(int j = 0; j < list.size(); j++) {", 4);
-				str +=			GeneratorHelper.ind(5) + funMFtableEqualTupe();
-				str +=			GeneratorHelper.gl("position = j;", 6);
-				str +=			GeneratorHelper.gl("is_find = true;", 6);
-				str +=			GeneratorHelper.gl("break;", 6);
-				str +=			GeneratorHelper.gl("}", 5);
-				str +=			GeneratorHelper.gl("}", 4);
-				str +=			GeneratorHelper.BLANK;
-				str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE", 4);
-				str +=			GeneratorHelper.gl("if(is_find) {", 4);
-		//	if(schedule_expressions.size() != 0)  {	
-				str +=			GeneratorHelper.gc("  SuchThat Condition => " + shechdule.toString() , 5);
-				for(int z = 0; z < schedule_expressions.size() ; z++) {
-				str +=			updateMFTable_Ifexist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z), 5);
-				}
-		//	}	
-				str +=			GeneratorHelper.gl("} else { ", 4);
-				str += 			generateMFTable_Header_Assignment(5);
-		//	if(schedule_expressions.size() != 0)  {	
-				str +=			GeneratorHelper.gc("  SuchThat Condition => " + shechdule.toString() , 5);
-				for(int z = 0; z < schedule_expressions.size() ; z++) {
-				str +=			updateMFTable_IfnonExist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z),5);
-				}
-		//	}
-		//	if(schedule_expressions.size() != 0)  {	
-				str += 			GeneratorHelper.ind(5) + "if(flag_update) {\n";
-		//	}
-				str += 			GeneratorHelper.ind(6) + "list.add(mf_entry);\n";
-		//	if(schedule_expressions.size() != 0)  {	
-				str += 			GeneratorHelper.ind(5) + "}\n";
-		//	}
+			str +=			GeneratorHelper.gc("  lookup from MF_TABLE", 4);
+			str +=			GeneratorHelper.gl("for(int j = 0; j < list.size(); j++) {", 4);
+			str +=			GeneratorHelper.ind(5) + funMFtableEqualTupe();
+			str +=			GeneratorHelper.gl("position = j;", 6);
+			str +=			GeneratorHelper.gl("is_find = true;", 6);
+			str +=			GeneratorHelper.gl("break;", 6);
+			str +=			GeneratorHelper.gl("}", 5);
+			str +=			GeneratorHelper.gl("}", 4);
+			str +=			GeneratorHelper.BLANK;
+			str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE", 4);
+			str +=			GeneratorHelper.gl("if(is_find) {", 4);
+			str +=			GeneratorHelper.gc("  SuchThat Condition => " + shechdule.toString() , 5);
+			for(int z = 0; z < schedule_expressions.size() ; z++) {
+			str +=			updateMFTable_Ifexist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z), 5);
+			}
+			str +=			GeneratorHelper.gl("} else { ", 4);
+			str += 			generateMFTable_Header_Assignment(5);
+			str +=			GeneratorHelper.gc("  SuchThat Condition => " + shechdule.toString() , 5);
+			for(int z = 0; z < schedule_expressions.size() ; z++) {
+			str +=			updateMFTable_IfnonExist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z),5);
+			}
+			str += 			GeneratorHelper.ind(5) + "if(flag_update) {\n";
+			str += 			GeneratorHelper.ind(6) + "list.add(mf_entry);\n";
+			str += 			GeneratorHelper.ind(5) + "}\n";
 			str +=			GeneratorHelper.gl("}", 4);
 			str +=			GeneratorHelper.gl("}", 3);
 			str +=			GeneratorHelper.BLANK;
