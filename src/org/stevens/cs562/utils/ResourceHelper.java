@@ -6,6 +6,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 import org.stevens.cs562.utils.test.Test_SQL_Parser;
@@ -50,8 +53,39 @@ public class ResourceHelper {
 		return prop;
 	}
 	
-	public static String getValue(String key) throws IOException {
-		return getProperties().getProperty(key);
+	public static String getValue(String key){
+		try {
+			return getProperties().getProperty(key);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
+	
+	/**
+	 * @return
+	 * @throws SQLException 
+	 * @throws IOException 
+	 */
+	public static Connection getConnection()  {
+		Connection conn = null;
+		try 
+		{
+			String usr = ResourceHelper.getValue("usrname");
+			String pwd =ResourceHelper.getValue("password");;
+			String url =ResourceHelper.getValue("postsql_url");
+			conn = DriverManager.getConnection(url, usr, pwd); 
+			Class.forName("org.postgresql.Driver");
+			conn = DriverManager.getConnection(url, usr, pwd); 
+		} 
 
+		catch(Exception e) 
+		{
+			System.out.println("Fail loading Driver!");
+			e.printStackTrace();
+		}
+		
+	
+		return conn;
+	}
 }

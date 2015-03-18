@@ -13,7 +13,7 @@ public class Test_Btree {
 	
 	public static void main(String[] args) {
 		BTreePlus<String> btree = new BTreePlus<String>(6);
-		BTreePlus<Integer> btree_test = new BTreePlus<Integer>(5);
+		BTreePlus<Integer> btree_test = new BTreePlus<Integer>(7);
 		Random radom = new Random();
 		int i =0;
 //		int f =0;

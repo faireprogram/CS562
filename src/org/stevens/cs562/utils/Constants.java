@@ -95,4 +95,8 @@ public class Constants {
 	public static String OUT_PUT_PATH = "D:\\Project\\Java\\CS562\\Test\\src\\";
 	
 	public static String GROUPING_ZERO = "Group 0";
+	
+	public static String GENERATE_EMF = "EMF";
+	
+	public static String GENERATE_MF = "MF";
 }

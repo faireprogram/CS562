@@ -43,6 +43,8 @@ public class CodeGenerator {
 	
 	private RelationBuilder relationBuilder;
 	
+	private Generator generator;
+	
 	private String usr;
 	private String psw;
 	private String url;
@@ -60,6 +62,10 @@ public class CodeGenerator {
 	 * 
 	 */
 	Connection connection;
+	
+	public CodeGenerator(Generator genrator) {
+		
+	}
 	
 	public CodeGenerator(SqlSentence sqlsentence, Connection connect) throws IOException {
 		this.sqlsentence = sqlsentence;
@@ -447,9 +453,6 @@ public class CodeGenerator {
 	}
 	
 	private String updateMFTable_Ifexist(GroupingVaribale current_variable, ComparisonAndComputeExpression current_shedule_expressions, int incent) {
-//		AggregateExpressionVisitorImpl visitor = new AggregateExpressionVisitorImpl();
-		/*Get all aggregateExpression*/
-//		getParticularAggregateExpression(visitor, current_shedule_expressions);
 		String mfTable = "";
 		/*
 		 * Group 0 needn't compute the codition
