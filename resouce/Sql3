@@ -1,0 +1,6 @@
+	select prod, month, count( X.quant), count( Y.quant)
+	from Sales
+	WHere year < 1997 and year > 1994
+	group by prod, month : X, Y
+	such that  year < 1997 or  quant > avg(X.quant) ,  Y.quant > avg(X.quant), X.year >1995
+	having avg(X.quant) * 2 <= avg(Y.quant)

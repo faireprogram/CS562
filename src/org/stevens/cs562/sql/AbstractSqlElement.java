@@ -9,6 +9,8 @@ public abstract class AbstractSqlElement implements SqlElement{
 	 */
 	private SqlSentence selfSentce;
 	
+	private boolean exist = true;
+	
 	public AbstractSqlElement(String elementSql, SqlSentence selfSentce) {
 		this.selfSentce = selfSentce;
 		convert(elementSql);
@@ -31,6 +33,22 @@ public abstract class AbstractSqlElement implements SqlElement{
 	public void setSelfSentce(SqlSentence selfSentce) {
 		this.selfSentce = selfSentce;
 	}
+
+	/**
+	 * @return the exist
+	 */
+	public boolean isExist() {
+		return exist;
+	}
+
+	/**
+	 * @param exist the exist to set
+	 */
+	public void setExist(boolean exist) {
+		this.exist = exist;
+	}
+	
+	
 	
 	
 }

@@ -3,6 +3,8 @@ package org.stevens.cs562.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringBuilder {
 
@@ -44,6 +46,11 @@ public class StringBuilder {
 		}
 	}
 	
+//	public static List<String> splitStringFromSQL(String sql)  {
+//		
+//		
+//	}
+	
 	public static List<String> splitStringFromParenthesis(String sql) {
 		Stack<Integer> index_left_stack = new Stack<Integer>();
 		List<String> results = new ArrayList<String>();
@@ -63,4 +70,90 @@ public class StringBuilder {
 		return results;
 	}
 	
+	public static String[] splitSqlIntoStringArray(String a) {
+		String[] results = new String[6];
+		int from_begin = getStartMatch(a, "from");
+		int where_begin =getStartMatch(a, "where");
+		int group_begin = getStartMatch(a, "group by");
+		int suchthat_begin = getStartMatch(a, "such that");
+		int having_begin = getStartMatch(a, "having");
+		
+		int select_end = getEndMatch(a, "select");
+		int from_end = getEndMatch(a, "from");
+		int where_end =getEndMatch(a, "where");
+		int group_end = getEndMatch(a, "group by");
+		int suchthat_end = getEndMatch(a, "such that");
+		int having_end = getEndMatch(a, "having");
+		
+		String select_part = a.substring(select_end, from_begin);
+		String from_part = "";
+		if(where_begin != -1) {
+			from_part = a.substring(from_end, where_begin);
+		} else if(group_begin != -1) {
+			from_part = a.substring(from_end, group_begin);
+		} else {
+			from_part = a.substring(from_end, a.length());
+		}
+		
+		String where_part = "";
+		if(where_begin != -1) {
+			if(group_begin != -1) {
+				where_part = a.substring(where_end, group_begin);
+			} else {
+				where_part = a.substring(where_end, a.length());
+			}
+		} 
+		
+		String group_part = "";
+		if(group_begin != -1) {
+			if(suchthat_begin != -1) {
+				group_part = a.substring(group_end, suchthat_begin);
+			} else if(having_begin != -1){
+				group_part = a.substring(group_end, having_begin);
+			} else {
+				group_part = a.substring(group_end,  a.length());
+			}
+		} 
+		
+		String suchthat_part = "";
+		if(suchthat_begin != -1) {
+			if(having_begin != -1) {
+				suchthat_part = a.substring(suchthat_end, having_begin);
+			} else {
+				suchthat_part = a.substring(suchthat_end, a.length());
+			}
+		} 
+		
+		String having_part = "";
+		if(having_begin != -1) {
+			having_part = a.substring(having_end, a.length());
+		} 
+		
+		results[0] = select_part.trim();
+		results[1] = from_part.trim();
+		results[2] = where_part.trim();
+		results[3] = group_part.trim();
+		results[4] = suchthat_part.trim();
+		results[5] = having_part.trim();
+		
+		return results;
+	}
+	
+	private static int getEndMatch(String a, String regex) {
+		 Pattern pattern3 = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		 Matcher matcher = pattern3.matcher(a);
+		while(matcher.find()) {
+			return matcher.end();
+		}
+		return -1;
+	}
+	
+	private static int getStartMatch(String a, String regex) {
+		 Pattern pattern3 = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+		 Matcher matcher = pattern3.matcher(a);
+		while(matcher.find()) {
+			return matcher.start();
+		}
+		return -1;
+	}
 }

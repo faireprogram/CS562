@@ -58,6 +58,16 @@ public class RelationBuilderVisitor extends AbstractVisitor{
 		 */
 		@Override
 		public void visit(ComparisonAndComputeExpression expression) {
+			
+			if(expression.getLeft() instanceof ComparisonAndComputeExpression && !(expression.getRight() instanceof ComparisonAndComputeExpression)) {
+				initialize_pair(expression.getRight(), (ComparisonAndComputeExpression)expression.getLeft());
+				return;
+			}
+			if(expression.getRight() instanceof ComparisonAndComputeExpression && !(expression.getLeft() instanceof ComparisonAndComputeExpression)) {
+				initialize_pair(expression.getLeft(), (ComparisonAndComputeExpression)expression.getRight());
+				return;
+			}
+			
 			// left visit
 			isLeftVisit = true;
 			expression.getLeft().accept(this);
@@ -81,6 +91,18 @@ public class RelationBuilderVisitor extends AbstractVisitor{
 				pairs.add(pair);
 			} else {
 				pairs.get(pairs.size()-1).setRight(expression);
+			}
+		}
+		
+		private void initialize_pair(Expression expression1, ComparisonAndComputeExpression expression2) {
+			AggregateExpressionVisitorImpl aggregation_visitor = new AggregateExpressionVisitorImpl();
+			aggregation_visitor.visit(expression2.getLeft());
+			aggregation_visitor.visit(expression2.getRight());
+			for(AggregateExpression agg_exp : aggregation_visitor.getAggregate_expression()) {
+				Pair pair = new Pair();
+				pair.setLeft(expression1);
+				pair.setRight(agg_exp);
+				pairs.add(pair);
 			}
 		}
 		

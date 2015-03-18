@@ -1,4 +1,4 @@
-	select prod, month, avg( X.quant), avg(Y.quant), Max(Z.quant)
+	select prod, month, avg( X.quant), avg(Y.quant), Max(Z.quant), count(Y.quant)
 	from Sales
 	where year=¡®1997¡¯
 	group by prod, month : X , Y, Z

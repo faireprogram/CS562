@@ -25,6 +25,7 @@ import org.stevens.cs562.sql.sqlimpl.IntegerExpression;
 import org.stevens.cs562.sql.sqlimpl.SelectElement;
 import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
 import org.stevens.cs562.sql.sqlimpl.SqlSentence;
+import org.stevens.cs562.sql.sqlimpl.SuchThatElement;
 import org.stevens.cs562.sql.sqlimpl.WhereElement;
 import org.stevens.cs562.sql.visit.AggregateExpressionVisitorImpl;
 import org.stevens.cs562.sql.visit.RelationBuilder;
@@ -41,10 +42,6 @@ public class CodeGenerator {
 	private SqlSentence sqlsentence;
 	
 	private RelationBuilder relationBuilder;
-	
-//	private String usr = "postgres";
-//	private String psw = "zw198787";
-//	private String url = "jdbc:postgresql://localhost:5432/test";
 	
 	private String usr;
 	private String psw;
@@ -198,16 +195,6 @@ public class CodeGenerator {
 	}
 	
 	/**
-	 * get Particular Aggregation from SQL
-	 */
-	private void getParticularAggregateExpression(AggregateExpressionVisitorImpl visitor, List<Expression> particulars ) {
-		/* find the Aggression Expression and Add it to the set*/
-		for(Expression exp : particulars) {
-			visitor.visit(exp);
-		}
-	}
-	
-	/**
 	 * generateMF_Main
 	 * @param file
 	 * @throws IOException
@@ -254,12 +241,16 @@ public class CodeGenerator {
 		str +=			GeneratorHelper.BLANK;
 		//------------- Where Such Part
 		current_step = 0;
-		str += 			generateScan();
+		if(sqlsentence.getGroupByElement().isExist()) {
+			str += 			generateScan();
+		}
 		str +=			GeneratorHelper.BLANK;
 		//------------- Having Part
 		current_step = 1;
-		str +=			GeneratorHelper.gc("  Having Part", 3);
-		str +=          generateHavingCondition(3);
+		if(sqlsentence.getHavingElement().isExist()) {
+			str +=			GeneratorHelper.gc("  Having Part", 3);
+			str +=          generateHavingCondition(3);
+		}
 		str +=			GeneratorHelper.gc("  This part is used to print the result", 3);
 		str +=			getPrintResultCode(3);
 		str +=			GeneratorHelper.gl("conn.close();\n", 3);
@@ -282,8 +273,10 @@ public class CodeGenerator {
 			
 			for(AdjacentNode<GroupingVaribale> group_variable : shechdule) {
 				Expression ls = this.relationBuilder.getSuchThatBlockExpressionByVariable(group_variable.getValue());
-				schedule_expressions.add(ls);
-				shedule_variable.add(group_variable.getValue());
+			//	if(ls != null) {
+					schedule_expressions.add(ls);
+					shedule_variable.add(group_variable.getValue());
+			//	}
 			}
 			
 			
@@ -293,40 +286,56 @@ public class CodeGenerator {
 			str +=			GeneratorHelper.gl("boolean is_find = false;", 4);
 			str +=			GeneratorHelper.gl("int position = 0;", 4);
 			str +=			GeneratorHelper.BLANK;
-			str +=			GeneratorHelper.gc("  THIS IS WHERE CONDITION", 4);
-			str +=			generateWhereCondition(4);
-			str +=			GeneratorHelper.gc("  lookup from MF_TABLE", 4);
-			str +=			GeneratorHelper.gl("for(int j = 0; j < list.size(); j++) {", 4);
-			str +=			GeneratorHelper.ind(5) + funMFtableEqualTupe();
-			str +=			GeneratorHelper.gl("position = j;", 6);
-			str +=			GeneratorHelper.gl("is_find = true;", 6);
-			str +=			GeneratorHelper.gl("break;", 6);
-			str +=			GeneratorHelper.gl("}", 5);
-			str +=			GeneratorHelper.gl("}", 4);
-			str +=			GeneratorHelper.BLANK;
-			str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE", 4);
-			str +=			GeneratorHelper.gl("if(is_find) {", 4);
-			str +=			GeneratorHelper.gc("  SuchThat Condition => " + shechdule.toString() , 5);
-			for(int z = 0; z < schedule_expressions.size() ; z++) {
-			str +=			updateMFTable_Ifexist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z), 5);
+			/*
+			 * IF SQL WHERE ELEMENT not Exist
+			 */
+			if(sqlsentence.getWhereElement().isExist()) {
+				str +=			GeneratorHelper.gc("  THIS IS WHERE CONDITION", 4);
+				str +=			generateWhereCondition(4);
 			}
+			/*
+			 * IF ONLY GROUP BY ELEMENT
+			 */
 			
-			str +=			GeneratorHelper.gl("} else { ", 4);
-			str += 			generateMFTable_Header_Assignment(5);
-			for(int z = 0; z < schedule_expressions.size() ; z++) {
-			str +=			updateMFTable_IfnonExist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z),5);
-			}
-			str += 			GeneratorHelper.ind(5) + "list.add(mf_entry);\n";
+				str +=			GeneratorHelper.gc("  lookup from MF_TABLE", 4);
+				str +=			GeneratorHelper.gl("for(int j = 0; j < list.size(); j++) {", 4);
+				str +=			GeneratorHelper.ind(5) + funMFtableEqualTupe();
+				str +=			GeneratorHelper.gl("position = j;", 6);
+				str +=			GeneratorHelper.gl("is_find = true;", 6);
+				str +=			GeneratorHelper.gl("break;", 6);
+				str +=			GeneratorHelper.gl("}", 5);
+				str +=			GeneratorHelper.gl("}", 4);
+				str +=			GeneratorHelper.BLANK;
+				str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE", 4);
+				str +=			GeneratorHelper.gl("if(is_find) {", 4);
+		//	if(schedule_expressions.size() != 0)  {	
+				str +=			GeneratorHelper.gc("  SuchThat Condition => " + shechdule.toString() , 5);
+				for(int z = 0; z < schedule_expressions.size() ; z++) {
+				str +=			updateMFTable_Ifexist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z), 5);
+				}
+		//	}	
+				str +=			GeneratorHelper.gl("} else { ", 4);
+				str += 			generateMFTable_Header_Assignment(5);
+		//	if(schedule_expressions.size() != 0)  {	
+				str +=			GeneratorHelper.gc("  SuchThat Condition => " + shechdule.toString() , 5);
+				for(int z = 0; z < schedule_expressions.size() ; z++) {
+				str +=			updateMFTable_IfnonExist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z),5);
+				}
+		//	}
+		//	if(schedule_expressions.size() != 0)  {	
+				str += 			GeneratorHelper.ind(5) + "if(flag_update) {\n";
+		//	}
+				str += 			GeneratorHelper.ind(6) + "list.add(mf_entry);\n";
+		//	if(schedule_expressions.size() != 0)  {	
+				str += 			GeneratorHelper.ind(5) + "}\n";
+		//	}
 			str +=			GeneratorHelper.gl("}", 4);
 			str +=			GeneratorHelper.gl("}", 3);
 			str +=			GeneratorHelper.BLANK;
 			str +=			GeneratorHelper.BLANK;
+			
 			current_scan++;
 		}
-		
-		
-		
-		
 		
 		return str;
 	}
@@ -366,22 +375,31 @@ public class CodeGenerator {
 			mfTable_header	+= fragment;
 			 
 		}
+		mfTable_header +=  GeneratorHelper.ind(incent) + "boolean flag_update = false;\n";
 		return mfTable_header;
 	}
 	
 	private String updateMFTable_IfnonExist(GroupingVaribale current_variable, ComparisonAndComputeExpression current_shedule_expressions, int incent) throws SQLException {
-//		AggregateExpressionVisitorImpl visitor = new AggregateExpressionVisitorImpl();
-		/*Get all aggregateExpression*/
-//		getAllAggregateExpression(visitor);
 		/*
 		 * Grouping Attributes
 		 */
 		String mfTable = "";
+		/*
+		 * Group 0 needn't compute the codition
+		 */
+		if(current_shedule_expressions != null) {
+			mfTable = GeneratorHelper.ind(incent) + "if(";
+			String s = generateStringFromCondition(current_shedule_expressions.getLeft(), current_shedule_expressions.getRight(), current_shedule_expressions.getOperator());
+			mfTable   += ( s + ") {\n ");
+		}
+		incent++;
 		
 		/*
 		 * Aggregate Operator
 		 */
-		for(AggregateExpression expression : current_variable.getAll_aggregates()) {
+		Iterator<AggregateExpression> express_iterator = current_variable.getAll_aggregates().iterator();
+		while(express_iterator.hasNext()) {
+			AggregateExpression expression = express_iterator.next();
 			// AVG
 			if(expression.getOperator().equals(AggregateOperator.AVERAGE)) {
 				String[] strs = expression.getSumCountName().split(",");
@@ -423,8 +441,16 @@ public class CodeGenerator {
 						 expression.getConvertionName() + " = " + "rs" + current_scan + ".getInt(\"" + expression.getVariable().getName() + "\")" + ";\n";
 				mfTable += fragment1;
 			}
+			
+			if(!express_iterator.hasNext()) {
+				mfTable +=  GeneratorHelper.ind(incent) + "flag_update = true;\n";
+			}
+			
 		} 
 		
+		if(current_shedule_expressions != null) {
+			mfTable += GeneratorHelper.ind(incent-1) + "}\n";
+		}
 		return mfTable;
 	}
 	
@@ -432,9 +458,16 @@ public class CodeGenerator {
 //		AggregateExpressionVisitorImpl visitor = new AggregateExpressionVisitorImpl();
 		/*Get all aggregateExpression*/
 //		getParticularAggregateExpression(visitor, current_shedule_expressions);
-		String mfTable = GeneratorHelper.ind(incent) + "if(";
-		String s = generateStringFromCondition(current_shedule_expressions.getLeft(), current_shedule_expressions.getRight(), current_shedule_expressions.getOperator());
-		mfTable   += ( s + ") {\n ");
+		String mfTable = "";
+		/*
+		 * Group 0 needn't compute the codition
+		 */
+		if(current_shedule_expressions != null) {
+			mfTable = GeneratorHelper.ind(incent) + "if(";
+			String s = generateStringFromCondition(current_shedule_expressions.getLeft(), current_shedule_expressions.getRight(), current_shedule_expressions.getOperator());
+			mfTable   += ( s + ") {\n ");
+		}
+		
 		incent++;
 		boolean sum_count = false;
 		boolean count_count = false;
@@ -468,16 +501,16 @@ public class CodeGenerator {
 				
 				String fragment1 = GeneratorHelper.ind(incent) + "list.get(position)." + 
 								 expression.getConvertionName() + " = " + "list.get(position)." + 
-								 expression.getConvertionName() + " >= rs.getInt(\"" + expression.getVariable().getName() + "\")" +
-								 " ? " + "list.get(position)." + expression.getConvertionName() + " : rs.getInt(\""+ expression.getVariable().getName() +"\");\n";
+								 expression.getConvertionName() + " >= rs" + current_scan + ".getInt(\"" + expression.getVariable().getName() + "\")" +
+								 " ? " + "list.get(position)." + expression.getConvertionName() + " : rs" + current_scan + ".getInt(\""+ expression.getVariable().getName() +"\");\n";
 				mfTable += fragment1;
 			}
 			//count min
 			if(expression.getOperator().equals(AggregateOperator.MIN)) {
 				String fragment1 = GeneratorHelper.ind(incent) + "list.get(position)." + 
 								 expression.getConvertionName() + " = " + "list.get(position)." + 
-								 expression.getConvertionName() + " <= rs.getInt(\"" + expression.getVariable().getName() + "\")" +
-								 " ? " + "list.get(position)." + expression.getConvertionName() + " : rs.getInt(\""+ expression.getVariable().getName() +"\");\n";
+								 expression.getConvertionName() + " <= rs" + current_scan + ".getInt(\"" + expression.getVariable().getName() + "\")" +
+								 " ? " + "list.get(position)." + expression.getConvertionName() + " : rs" + current_scan + ".getInt(\""+ expression.getVariable().getName() +"\");\n";
 				mfTable += fragment1;
 			}
 			//count count
@@ -497,7 +530,9 @@ public class CodeGenerator {
 				sum_count = true;
 			}
 		} 
-		mfTable += GeneratorHelper.ind(incent-1) + "}\n";
+		if(current_shedule_expressions != null) {
+			mfTable += GeneratorHelper.ind(incent-1) + "}\n";
+		}
 		return mfTable;
 	}
 	
@@ -600,7 +635,39 @@ public class CodeGenerator {
 		if(left instanceof IntegerExpression && right instanceof AggregateExpression) {
 			final_result = generateStringFromCondition((IntegerExpression)left, (AggregateExpression)right, operator);
 		}
+		if(left instanceof SimpleExpression && right instanceof ComparisonAndComputeExpression) {
+			final_result = generateStringFromCondition((SimpleExpression)left, (ComparisonAndComputeExpression)right, operator);
+		}
+		if(left instanceof ComparisonAndComputeExpression && right instanceof SimpleExpression) {
+			final_result = generateStringFromCondition((ComparisonAndComputeExpression)left, (SimpleExpression)right, operator);
+		}
+		if(left instanceof AggregateExpression && right instanceof ComparisonAndComputeExpression) {
+			final_result = generateStringFromCondition((AggregateExpression)left, (ComparisonAndComputeExpression)right, operator);
+		}
+		if(left instanceof ComparisonAndComputeExpression && right instanceof AggregateExpression) {
+			final_result = generateStringFromCondition((ComparisonAndComputeExpression)left, (AggregateExpression)right, operator);
+		}
 		return final_result;
+	}
+	
+	private String generateStringFromCondition(AggregateExpression left, ComparisonAndComputeExpression right, ComparisonAndComputeOperator operator) {
+		String fragment = "mf_entry." + left.getConvertionName() + " " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		return fragment;
+	}
+	
+	private String generateStringFromCondition(ComparisonAndComputeExpression left, AggregateExpression right, ComparisonAndComputeOperator operator) {
+		String fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ")" + " " + operator.getJava_name() + "mf_entry." + right.getConvertionName();
+		return fragment;
+	}
+	
+	private String generateStringFromCondition(SimpleExpression left, ComparisonAndComputeExpression right, ComparisonAndComputeOperator operator) {
+		String fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() + "\") " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		return fragment;
+	}
+	
+	private String generateStringFromCondition(ComparisonAndComputeExpression left, SimpleExpression right, ComparisonAndComputeOperator operator) {
+		String fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ")" + operator.getJava_name() + "rs" + current_scan +".getInt(\"" + right.getVariable().getName() + "\") ";
+		return fragment;
 	}
 	
 	private String generateStringFromCondition(AggregateExpression left, IntegerExpression right, ComparisonAndComputeOperator operator) {

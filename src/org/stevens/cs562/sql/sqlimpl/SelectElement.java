@@ -14,8 +14,6 @@ public class SelectElement extends AbstractSqlElement {
 
 	public SelectElement(String elementSql, SqlSentence sentence) {
 		super(elementSql, sentence);
-		
-		
 	}
 
 	/**
