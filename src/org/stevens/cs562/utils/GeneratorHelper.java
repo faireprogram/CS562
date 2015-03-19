@@ -7,6 +7,7 @@ import java.sql.Statement;
 
 import org.stevens.cs562.sql.Expression;
 import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
+import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
 import org.stevens.cs562.sql.sqlimpl.SqlSentence;
 import org.stevens.cs562.sql.visit.AggregateExpressionVisitorImpl;
 
@@ -60,6 +61,9 @@ public class GeneratorHelper {
 		for(Expression project_items : sqlsentence.getSelectElement().getProjectItems()) {
 			if(project_items instanceof AggregateExpression) {
 				visitor.getAggregate_expression().add((AggregateExpression)project_items);
+			}
+			if(project_items instanceof ComparisonAndComputeExpression) {
+				visitor.visit(project_items);
 			}
 		}
 	}

@@ -3,7 +3,6 @@ package org.stevens.cs562.sql.sqlimpl;
 import org.stevens.cs562.sql.AbstractExpression;
 import org.stevens.cs562.sql.ComparisonAndComputeOperator;
 import org.stevens.cs562.sql.Expression;
-import org.stevens.cs562.sql.Variable;
 
 /**
  * ConditionExpression
@@ -56,6 +55,17 @@ public class ComparisonAndComputeExpression extends AbstractExpression{
 	 */
 	public Expression getRight() {
 		return right;
+	}
+	
+	
+
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return getLeft().hashCode() * 71 + getRight().hashCode() * 31 + getOperator().hashCode() * 5;
 	}
 
 

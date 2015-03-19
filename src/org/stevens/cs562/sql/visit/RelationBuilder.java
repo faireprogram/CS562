@@ -1,6 +1,5 @@
 package org.stevens.cs562.sql.visit;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 

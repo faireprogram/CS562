@@ -19,6 +19,7 @@ import org.stevens.cs562.sql.sqlimpl.HavingElement;
 import org.stevens.cs562.sql.sqlimpl.IntegerExpression;
 import org.stevens.cs562.sql.sqlimpl.SelectElement;
 import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
+import org.stevens.cs562.sql.sqlimpl.StringExpression;
 import org.stevens.cs562.sql.sqlimpl.SuchThatElement;
 import org.stevens.cs562.sql.sqlimpl.WhereElement;
 
@@ -132,15 +133,21 @@ public class SQLStringParsers {
 	 */
 	private static Expression processExpression(String express, HashMap<String, GroupingVaribale> dic) {
 		Expression final_expression = null;
+		if(StringBuilder.isCompute(express.trim())) {
+			return generateSingleComputeExpression(express, dic);
+		}
 		if(express.trim().matches("(?i:avg\\(.+?\\)|count\\(.+?\\)|min\\(.+?\\)|max\\(.+?\\)|sum\\(.+?\\))")) {
 			final_expression = processAggregateExpression(express.trim(), dic);
 		} else if(StringBuilder.isNumber(express)) {
 			final_expression = new IntegerExpression(Integer.valueOf(express.trim()));
+		} else if(StringBuilder.isString(express)){ 
+			final_expression = new StringExpression(express.trim());
 		} else {
 			final_expression = processSimpleExpression(express.trim(), dic);
 		}
 		return final_expression;
 	}
+	
 	
 	
 	/*

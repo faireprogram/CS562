@@ -1,8 +1,6 @@
 package org.stevens.cs562.code;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,34 +14,20 @@ import org.stevens.cs562.sql.sqlimpl.GroupByElement;
 import org.stevens.cs562.sql.sqlimpl.GroupingVaribale;
 import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.GeneratorHelper;
-import org.stevens.cs562.utils.ResourceHelper;
 import org.stevens.cs562.utils.graph.AdjacentNode;
 
+/**
+ * MFGenerator is used to generate the MF STRUTURE CODE
+ *
+ */
 public class MFGenerator extends AbstractCodeGenerator{
 
 	public MFGenerator(String sql) {
 		super(sql);
 	}
 	
-	public void generateMain() {
-		try {
-			String path = ResourceHelper.getValue("output");
-			FileOutputStream mf_main;
-			mf_main = new FileOutputStream(path + Constants.GENERATE_CODE_MF_MAIN + ".java");
-			generateMF_Main(mf_main);
-			mf_main.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-	}
-
-
-	private void generateMF_Main(FileOutputStream file) throws IOException, SQLException {
+	@Override
+	protected void generateMF_Main(FileOutputStream file) throws Exception {
 		List<String> heads_prints = getPrintedHeader();
 		String str = "";
 		str += "import java.sql.Connection;\n";
@@ -57,10 +41,6 @@ public class MFGenerator extends AbstractCodeGenerator{
 		str +=  GeneratorHelper.gc("   THIS IS AUTOMATICALLY GENERATE CODE", 0);
 		str += "public class "+ Constants.GENERATE_CODE_MF_MAIN +" {\n";
 		str +=  	"\tpublic static void main(String[] args) {\n";
-		str += 			"\t\t" + Constants.GENERATE_CODE_MF_TABLE+"[] sri= new " +Constants.GENERATE_CODE_MF_TABLE + "[500];\n";
-		str += 			"\t\tfor(int i=0; i<500; i++) {\n";
-		str +=			"\t\t\tsri[i] = new "+ Constants.GENERATE_CODE_MF_TABLE +"();\n";
-		str += 			"\t\t}\n";
 		str += 			"\t\tString usr =\"" + usr +"\";\n";
 		str += 			"\t\tString pwd =\"" + psw +"\";\n";
 		str += 			"\t\tString url =\"" + url +"\";\n";

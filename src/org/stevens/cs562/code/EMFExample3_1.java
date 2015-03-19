@@ -42,7 +42,7 @@ public class EMFExample3_1 {
 //			}
 			
 			//----------------------------------------------------------------------------------------------------------------------------
-			//     Compute the GROUP VARIABLE 0
+			//     Compute the X, Y
 			//----------------------------------------------------------------------------------------------------------------------------
 			/*
 			 * find the grouping attributes for GROUPING VARIABELS 0
@@ -53,20 +53,14 @@ public class EMFExample3_1 {
 			boolean update0 = true;
 			boolean success0 = false;
 			
-			if(!(datas[i].getInteger("quant") > 500)) {
-				update0 = false;
-			}
 			for(int j = 0; j < list.size(); j++) {
 				// judge whether it has the same grouping attributes
-				if(list.get(j).product.equals(datas[i].getString("product")) && list.get(j).year == datas[i].getInteger("year") && list.get(j).month == datas[i].getInteger("month")) {
+				if(list.get(j).product.equals(datas[i].getString("product")) && list.get(j).year == datas[i].getInteger("year") && list.get(j).month == datas[i].getInteger("month") && datas[i].getInteger("quant") > 500) {
 					if(update0) {
 						//update avg
 						success0 = true;
 					}
 				}
-			}
-			if(update0 && !success0) {
-				emf_entry._1_sum_quantity = datas[i].getInteger("quant");
 			}
 			
 			boolean update1 = true;

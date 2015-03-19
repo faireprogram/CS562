@@ -32,7 +32,30 @@ public class StringBuilder {
 		if(s1 == null) {
 			return false;
 		}
-		if(s1.trim().matches("^\\d+$")) {
+		// || s1.trim().matches("^\\d*\\.\\d*$") do not support float
+		if(s1.trim().matches("^\\d+$") ) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isString(String s1) {
+		if(s1 == null) {
+			return false;
+		}
+		if(s1.trim().matches("^'.+?'$") || s1.trim().matches("\".+?\"$")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isCompute(String s1) {
+		if(s1 == null) {
+			return false;
+		}
+		String compute_regex = "\\+|-|\\*|/";
+		String[] strings = s1.split(compute_regex);
+		if(strings.length > 1) {
 			return true;
 		}
 		return false;

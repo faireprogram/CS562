@@ -35,6 +35,8 @@ public class AggregateExpressionVisitorImpl extends AbstractVisitor{
 	public void visit(AggregateExpression expression) {
 		aggregate_expression.add(expression);
 	}
+	
+	
 
 	/**
 	 * @return the aggregate_expression

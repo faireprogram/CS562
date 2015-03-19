@@ -59,6 +59,15 @@ public class SimpleExpression extends AbstractExpression{
 		
 		return false;
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.getVariable().hashCode() * 31;
+	}
+	
 	
 	
 	

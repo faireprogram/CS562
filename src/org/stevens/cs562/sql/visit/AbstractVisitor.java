@@ -6,6 +6,7 @@ import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
 import org.stevens.cs562.sql.sqlimpl.IntegerExpression;
 import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
+import org.stevens.cs562.sql.sqlimpl.StringExpression;
 
 public abstract class AbstractVisitor implements Visitor  {
 
@@ -27,6 +28,9 @@ public abstract class AbstractVisitor implements Visitor  {
 		if(expression instanceof IntegerExpression) {
 			visit((IntegerExpression)expression);
 		}
+		if(expression instanceof StringExpression) {
+			visit((StringExpression)expression);
+		}
 	}
 
 	public void visit(SimpleExpression expression) {
@@ -46,6 +50,10 @@ public abstract class AbstractVisitor implements Visitor  {
 	
 	public void visit(IntegerExpression expression) {
 		System.out.println("Visit IntegerExpression");
+	}
+	
+	public void visit(StringExpression expression) {
+		System.out.println("Visit StringExpression");
 	}
 
 	

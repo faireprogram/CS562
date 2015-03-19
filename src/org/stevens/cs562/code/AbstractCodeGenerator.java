@@ -1,5 +1,6 @@
 package org.stevens.cs562.code;
 
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
@@ -23,6 +24,7 @@ import org.stevens.cs562.sql.sqlimpl.IntegerExpression;
 import org.stevens.cs562.sql.sqlimpl.SelectElement;
 import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
 import org.stevens.cs562.sql.sqlimpl.SqlSentence;
+import org.stevens.cs562.sql.sqlimpl.StringExpression;
 import org.stevens.cs562.sql.sqlimpl.WhereElement;
 import org.stevens.cs562.sql.visit.AggregateExpressionVisitorImpl;
 import org.stevens.cs562.sql.visit.RelationBuilder;
@@ -69,7 +71,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 		String path;
 		try {
 			path = ResourceHelper.getValue("output");
-			FileOutputStream mf_table = new FileOutputStream(path +Constants.GENERATE_CODE_MF_TABLE + ".java");
+			FileOutputStream mf_table = new FileOutputStream(path +getOutPutTableName() + ".java");
 			generateMF_Table(mf_table);
 			mf_table.close();
 		} catch (IOException e) {
@@ -93,7 +95,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 		/*Get all aggregateExpression*/
 		GeneratorHelper.getAllAggregateExpression(visitor, sqlsentence);
 		
-		String str = "public class " + Constants.GENERATE_CODE_MF_TABLE +" {\n";
+		String str = "public class " + getOutPutTableName() +" {\n";
 			str += "\t//------------------------------------------------------------------\n";
 			str += "\t// generate grouping attributes automatically\n";
 			str += "\t//------------------------------------------------------------------\n";
@@ -146,7 +148,33 @@ public abstract class AbstractCodeGenerator implements Generator{
 	/*
 	 * Generate TABLE -------------------------------------------------------------------END
 	 */
-
+	
+	/*
+	 * Generate Main -------------------------------------------------------------------Begin
+	 */
+	/* (non-Javadoc)
+	 * @see org.stevens.cs562.code.Generator#generateMain()
+	 */
+	public void generateMain() {
+		try {
+			String path = ResourceHelper.getValue("output");
+			FileOutputStream mf_main;
+			mf_main = new FileOutputStream(path + getOutPutMainName() + ".java");
+			generateMF_Main(mf_main);
+			mf_main.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected void generateMF_Main(FileOutputStream file) throws Exception {
+		// TODO 
+	}
+	
 	/*
 	 * Generate Main TOOL FUNCTION-------------------------------------------------------BEGIN
 	 */
@@ -171,6 +199,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 		return strs;
 	}
 	
+
 	//--------------------------------------- Where Part ---------------------------------------
 	protected String generateWhereCondition(int incent) {
 		String result = GeneratorHelper.ind(incent) + "if(!(";
@@ -258,7 +287,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 			if(expression.getOperator().equals(AggregateOperator.SUM) && !sum_count) {
 				//sum
 				String fragment1 = GeneratorHelper.ind(incent) + "list.get(position)." + 
-						expression.getConvertionName() + " = " + "list.get(position)." + expression.getConvertionName() + " + rs.getInt(\"" + expression.getVariable().getName() + "\");\n";
+						expression.getConvertionName() + " = " + "list.get(position)." + expression.getConvertionName() + " + rs" + current_scan +".getInt(\"" + expression.getVariable().getName() + "\");\n";
 				mfTable += fragment1;
 				sum_count = true;
 			}
@@ -347,10 +376,10 @@ public abstract class AbstractCodeGenerator implements Generator{
 
 	//--------------------------------------- Having part ---------------------------------------
 	protected String generateHavingCondition(int incent) {
-		String result = GeneratorHelper.ind(incent) + "Iterator<MFtable> result_having = list.iterator();\n";
+		String result = GeneratorHelper.ind(incent) + "Iterator<"+ getOutPutTableName() +"> result_having = list.iterator();\n";
 		result  +=  GeneratorHelper.ind(incent) + "while(result_having.hasNext()) {\n";
 		incent++;
-		result  +=  GeneratorHelper.ind(incent) + "MFtable mf_entry = result_having.next();\n";
+		result  +=  GeneratorHelper.ind(incent) +  getOutPutTableName() + " mf_entry = result_having.next();\n";
 		result  +=  GeneratorHelper.ind(incent) + "if(!(";
 		HavingElement element = sqlsentence.getHavingElement();
 		Iterator<Expression> express_iterator = element.getHaving_expressions().iterator();		
@@ -368,20 +397,35 @@ public abstract class AbstractCodeGenerator implements Generator{
 	
 	//--------------------------------------- Projection part ---------------------------------------
 	protected String getPrintResultCode(int incent) {
-		String show_result = GeneratorHelper.ind(incent) + "Iterator<MFtable> results = list.iterator();\n";
+		String show_result = GeneratorHelper.ind(incent) + "Iterator<"+  getOutPutTableName() + "> results = list.iterator();\n";
 		int next_in = incent + 1;
 		show_result += GeneratorHelper.ind(incent) + "while(results.hasNext()) {\n";
-		show_result += GeneratorHelper.ind(next_in) + "MFtable next = results.next();\n";
+		show_result += GeneratorHelper.ind(next_in) + getOutPutTableName() + " next = results.next();\n";
 		Iterator<Expression> express_iterator = sqlsentence.getSelectElement().getProjectItems().iterator();
 		while(express_iterator.hasNext()) {
 			Expression current = express_iterator.next();
-			String fragment = GeneratorHelper.ind(next_in) + "System.out.printf(\"%"+ current.toString().length() +"s\",next."+ current.getConvertionName() +" + \"\\t\");\n";
+			String fragment = GeneratorHelper.ind(next_in) + "System.out.printf(\"%"+ current.toString().length() +"s\","+ getOutPutString(current) +" + \"\\t\");\n";
 			if(!express_iterator.hasNext()) {
-				fragment = GeneratorHelper.ind(next_in) + "System.out.printf(\"%"+ current.toString().length() +"s\",next."+ current.getConvertionName() +" + \"\\t\\n\");\n";
+				fragment = GeneratorHelper.ind(next_in) + "System.out.printf(\"%"+ current.toString().length() +"s\","+ getOutPutString(current) +" + \"\\t\\n\");\n";
 			}
 			show_result += fragment;
 		}
 		return show_result + GeneratorHelper.gl("}", incent);
+	}
+	
+	protected String getOutPutString(Expression expression) {
+		String final_string = "";
+		if(!(expression instanceof ComparisonAndComputeExpression)) {
+			final_string =  "next." + expression.getConvertionName();
+		} else {
+			String left = getOutPutString(((ComparisonAndComputeExpression)expression).getLeft() );
+			String right = getOutPutString(((ComparisonAndComputeExpression)expression).getRight() );
+			final_string = left + ((ComparisonAndComputeExpression)expression).getOperator().getJava_name() + right;
+			if(((ComparisonAndComputeExpression)expression).getOperator().equals(ComparisonAndComputeOperator.DIVID)) {
+				final_string = "(float)" + final_string;
+			}
+		}
+		return final_string;
 	}
 	
 	
@@ -407,6 +451,9 @@ public abstract class AbstractCodeGenerator implements Generator{
 		if(left instanceof AggregateExpression && right instanceof SimpleExpression) {
 			final_result = generateStringFromCondition((AggregateExpression)left, (SimpleExpression)right, operator);
 		}
+		if(left instanceof AggregateExpression && right instanceof AggregateExpression) {
+			final_result = generateStringFromCondition((AggregateExpression)left, (AggregateExpression)right, operator);
+		}
 		if(left instanceof AggregateExpression && right instanceof IntegerExpression) {
 			final_result = generateStringFromCondition((AggregateExpression)left, (IntegerExpression)right, operator);
 		}
@@ -425,7 +472,52 @@ public abstract class AbstractCodeGenerator implements Generator{
 		if(left instanceof ComparisonAndComputeExpression && right instanceof AggregateExpression) {
 			final_result = generateStringFromCondition((ComparisonAndComputeExpression)left, (AggregateExpression)right, operator);
 		}
+		if(left instanceof StringExpression && right instanceof AggregateExpression) {
+			final_result = generateStringFromCondition((StringExpression)left, (AggregateExpression)right, operator);
+		}
+		if(left instanceof AggregateExpression && right instanceof StringExpression) {
+			final_result = generateStringFromCondition((AggregateExpression)left, (StringExpression)right, operator);
+		}
+		if(left instanceof StringExpression && right instanceof SimpleExpression) {
+			final_result = generateStringFromCondition((StringExpression)left, (SimpleExpression)right, operator);
+		}
+		if(left instanceof SimpleExpression && right instanceof StringExpression) {
+			final_result = generateStringFromCondition((SimpleExpression)left, (StringExpression)right, operator);
+		}
 		return final_result;
+	}
+	
+	protected String generateStringFromCondition(AggregateExpression left, AggregateExpression right, ComparisonAndComputeOperator operator) {
+		
+		String fragment = "";
+		if(current_step == 1) {
+			fragment = "mf_entry." + left.getConvertionName() + " " + operator.getJava_name() + " " + "mf_entry." + right.getConvertionName();
+		}
+		return fragment;
+	}
+	
+	protected String generateStringFromCondition(SimpleExpression left, StringExpression right, ComparisonAndComputeOperator operator) {
+		String fragment =  "rs" + current_scan +".getString(\"" + left.getVariable().getName() +"\").equals(" + right + ")";
+		if(current_step == 1) {
+			fragment = right + ".equals(" + "mf_entry." + left.getVariable().getName() + ")";
+		}
+		return fragment;
+	}
+	protected String generateStringFromCondition(StringExpression left, SimpleExpression right, ComparisonAndComputeOperator operator) {
+		String fragment =  "rs" + current_scan +".getString(\"" + right.getVariable().getName() +"\").equals(" + left + ")";
+		if(current_step == 1) {
+			fragment =  left + ".equals(" + "mf_entry." + right.getVariable().getName() + ")";
+		}
+		return fragment;
+	}
+	protected String generateStringFromCondition(StringExpression left, AggregateExpression right, ComparisonAndComputeOperator operator) {
+		String fragment = left + ".equals(" + "mf_entry." + right.getConvertionName() + ")";
+		return fragment;
+	}
+	
+	protected String generateStringFromCondition(AggregateExpression left, StringExpression right, ComparisonAndComputeOperator operator) {
+		String fragment = right + ".equals(" + "mf_entry." + left.getConvertionName() + ")";
+		return fragment;
 	}
 	
 	protected String generateStringFromCondition(AggregateExpression left, ComparisonAndComputeExpression right, ComparisonAndComputeOperator operator) {
@@ -457,14 +549,28 @@ public abstract class AbstractCodeGenerator implements Generator{
 	}
 	
 	protected String generateStringFromCondition(IntegerExpression left, AggregateExpression right, ComparisonAndComputeOperator operator) {
-		String fragment = left.getValue() + " " + operator.getJava_name() + " " + right.getConvertionName();
+		String fragment = left.getValue() + " " + operator.getJava_name() + " list.get(position)." +  right.getConvertionName();
+		if(current_step == 1) {
+			fragment =left.getValue() + " " + operator.getJava_name() + " " + "mf_entry." + right.getConvertionName();
+		}
 		return fragment;
 	}
 	
 	protected String generateStringFromCondition(SimpleExpression left, SimpleExpression right, ComparisonAndComputeOperator operator) {
-		String fragment = "rs" + current_scan +".getString(\"" + left.getVariable().getName() +"\").equals(" + right.getVariable().getName() + ")";
-		if(current_step == 1) {
-			fragment = "mf_entry." + left.getVariable().getName() +".equals(" + right.getVariable().getName() + ")";
+		String fragment = null;
+		try {
+			String tyString = GeneratorHelper.find_type(left.getVariable().getName(), connection, sqlsentence);
+			if(tyString.equals(Constants.STRING_TYPE)) {
+				fragment = "rs" + current_scan +".getString(\"" + left.getVariable().getName() +"\").equals(" + "list.get(position)."  + right.getVariable().getName() + ")";
+			}
+			if(tyString.equals(Constants.INTERGER_TYPE)) { 
+				fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() +"\") == " + "list.get(position)."  + right.getVariable().getName();
+			}
+			if(current_step == 1) {
+					fragment = "mf_entry." + left.getVariable().getName() +".equals(" + right.getVariable().getName() + ")";
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return fragment;
 	}
@@ -495,4 +601,12 @@ public abstract class AbstractCodeGenerator implements Generator{
 	/*
 	 * Generate Main TOOL FUNCTION-------------------------------------------------------END
 	 */
+	
+	protected String getOutPutTableName() {
+		return Constants.GENERATE_CODE_MF_TABLE;
+	}
+	
+	protected String getOutPutMainName() {
+		return Constants.GENERATE_CODE_MF_MAIN;
+	}
 }

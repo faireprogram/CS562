@@ -59,5 +59,4 @@ public class AttributeVariable extends AbstractVariable{
 		return false;
 	}
 	
-
 }

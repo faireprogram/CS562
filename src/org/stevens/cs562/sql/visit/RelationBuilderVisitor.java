@@ -10,6 +10,7 @@ import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
 import org.stevens.cs562.sql.sqlimpl.IntegerExpression;
 import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
+import org.stevens.cs562.sql.sqlimpl.StringExpression;
 import org.stevens.cs562.utils.graph.AdjacentList;
 import org.stevens.cs562.utils.graph.AdjacentNode;
 
@@ -52,6 +53,16 @@ public class RelationBuilderVisitor extends AbstractVisitor{
 		public void visit(IntegerExpression expression) {
 			initialize_pair(expression);
 		}
+		
+		/* (non-Javadoc)
+		 * @see org.stevens.cs562.sql.visit.AbstractVisitor#visit(org.stevens.cs562.sql.sqlimpl.StringExpression)
+		 */
+		@Override
+		public void visit(StringExpression expression) {
+			initialize_pair(expression);
+		}
+
+
 
 		/* (non-Javadoc)
 		 * @see org.stevens.cs562.sql.visit.AbstractVisitor#visit(org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression)

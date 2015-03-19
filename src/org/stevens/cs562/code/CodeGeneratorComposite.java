@@ -25,7 +25,7 @@ public class CodeGeneratorComposite {
 		} else if(type.equals(Constants.GENERATE_MF)) {
 			generator = new MFGenerator(sql);
 		} else if(type.equals(Constants.GENERATE_EMF)) {
-			generator = new EMFGenerator();
+			generator = new EMFGenerator(sql);
 		}
 	}
 

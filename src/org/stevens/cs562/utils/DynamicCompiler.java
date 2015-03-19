@@ -24,10 +24,12 @@ public class DynamicCompiler {
 
 	String path  ;
 	String compile_path;
+	String main_class_name;
 	
-	public DynamicCompiler() throws IOException {
+	public DynamicCompiler(String main_class_name) throws IOException {
 		this.path = ResourceHelper.getValue("output");
 		this.compile_path = this.path + "\\output\\class";
+		this.main_class_name = main_class_name;
 	}
 	
 	public void compileAndRun() {
@@ -82,7 +84,7 @@ public class DynamicCompiler {
                 compilationUnit);
         if (task.call()) {
         	 URLClassLoader classLoader = new URLClassLoader(new URL[]{current_compile_path.toURI().toURL()});
-        	 Class<?> cls = classLoader.loadClass(Constants.GENERATE_CODE_MF_MAIN);
+        	 Class<?> cls = classLoader.loadClass(this.main_class_name);
         	 Method main = cls.getDeclaredMethod("main", String[].class); // get the main method using reflection
         	 Object[] args = new Object[] { new String[0] };
         	 main.invoke(null, args);

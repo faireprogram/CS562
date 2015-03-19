@@ -84,6 +84,16 @@ public class Constants {
 	public static String GENERATE_CODE_MF_MAIN = "MFmain";
 	
 	/**
+	 * GENERATE_CODE_MF_TABLE
+	 */
+	public static String GENERATE_CODE_EMF_TABLE = "EMFtable";
+	
+	/**
+	 * GENERATE_CODE_MF_MAIN
+	 */
+	public static String GENERATE_CODE_EMF_MAIN = "EMFmain";
+	
+	/**
 	 * SEARCHING_TYPE
 	 */
 	public static String SEARCHING_TYPE ="select data_type, character_maximum_length from information_schema.columns where table_name = %s and column_name = %s ;";

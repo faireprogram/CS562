@@ -51,5 +51,13 @@ public class IntegerExpression extends AbstractExpression{
 	public String toString() {
 		return String.valueOf(value);
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		return this.getValue().hashCode() * 5;
+	}
 	
 }
