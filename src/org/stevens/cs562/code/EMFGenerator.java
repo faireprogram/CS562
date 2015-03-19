@@ -103,7 +103,7 @@ public class EMFGenerator extends AbstractCodeGenerator{
 			str +=			GeneratorHelper.gc("  THIS IS WHERE CONDITION", 4);
 			str +=			generateWhereCondition(4);
 		}
-		str +=			GeneratorHelper.gc("  lookup from MF_TABLE", 4);
+		str +=			GeneratorHelper.gc("  lookup from EMF_TABLE", 4);
 		str +=			GeneratorHelper.gl("for(int j = 0; j < list.size(); j++) {", 4);
 		str +=			GeneratorHelper.ind(5) + funMFtableEqualTupe();
 		str +=			GeneratorHelper.gl("is_find = true;", 6);
