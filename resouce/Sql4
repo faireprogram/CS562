@@ -1,0 +1,5 @@
+	select prod, month, avg(quant), avg(X.quant), avg(Y.quant), avg(Z.quant), avg(H.quant)
+	from Sales
+	WHere year < 1997 and year > 1994
+	group by prod, month : X, Y, Z, H
+	such that X.quant > avg(quant), Y.year > 1992 and Y.quant > avg(X.quant), Z.quant > min(X.quant), H.quant > max(Z.quant)
