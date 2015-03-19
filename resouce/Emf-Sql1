@@ -1,6 +1,6 @@
-	select prod, year , month, avg( X.quant), avg( Y.quant), avg( X.quant)/avg( Y.quant)
+	select prod, year , month, avg( X.quant), avg( Y.quant), avg(quant), avg( X.quant)/avg( Y.quant)
 	from Sales
 	where year= 1997
 	group by prod, month, year : X, Y
-	such that  X.prod = prod and X.month > month, Y.year = year and Y.month < month
-	having  avg( X.quant) > avg( Y.quant) * 2
+	such that  X.prod = prod and X.month > month, Y.year = year and Y.month < month and Y.quant > avg(quant), month = month and prod = prod
+	having AVG(quant) + AVG(Y.quant) > 3500 and avg(quant) <1500

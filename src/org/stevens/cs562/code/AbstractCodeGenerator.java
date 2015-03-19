@@ -472,6 +472,12 @@ public abstract class AbstractCodeGenerator implements Generator{
 		if(left instanceof ComparisonAndComputeExpression && right instanceof AggregateExpression) {
 			final_result = generateStringFromCondition((ComparisonAndComputeExpression)left, (AggregateExpression)right, operator);
 		}
+		if(left instanceof ComparisonAndComputeExpression && right instanceof IntegerExpression) {
+			final_result = generateStringFromCondition((ComparisonAndComputeExpression)left, (IntegerExpression)right, operator);
+		}
+		if(left instanceof IntegerExpression && right instanceof ComparisonAndComputeExpression) {
+			final_result = generateStringFromCondition((IntegerExpression)left, (ComparisonAndComputeExpression)right, operator);
+		}
 		if(left instanceof StringExpression && right instanceof AggregateExpression) {
 			final_result = generateStringFromCondition((StringExpression)left, (AggregateExpression)right, operator);
 		}
@@ -485,6 +491,24 @@ public abstract class AbstractCodeGenerator implements Generator{
 			final_result = generateStringFromCondition((SimpleExpression)left, (StringExpression)right, operator);
 		}
 		return final_result;
+	}
+	
+	protected String generateStringFromCondition(ComparisonAndComputeExpression left, IntegerExpression right, ComparisonAndComputeOperator operator) {
+		
+		String fragment = "";
+		if(current_step == 1) {
+			fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ") " + operator.getJava_name() + " "  + right.getValue();
+		}
+		return fragment;
+	}
+	
+	protected String generateStringFromCondition(IntegerExpression left, ComparisonAndComputeExpression right, ComparisonAndComputeOperator operator) {
+		
+		String fragment = "";
+		if(current_step == 1) {
+			fragment = left.getValue() + " " + operator.getJava_name() + " ("  +  generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		}
+		return fragment;
 	}
 	
 	protected String generateStringFromCondition(AggregateExpression left, AggregateExpression right, ComparisonAndComputeOperator operator) {
