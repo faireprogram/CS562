@@ -64,7 +64,7 @@ public class GroupByElement extends AbstractSqlElement {
 //		super(elementSql);
 //	}
 	public String toString() {
-		String final_to_string = null;
+		String final_to_string = "";
 		Iterator<AttributeVariable> iterator_attribute = this.getGrouping_attributes().iterator();
 		while(iterator_attribute.hasNext()) {
 			final_to_string += iterator_attribute.next().toString() + ", ";
@@ -78,5 +78,16 @@ public class GroupByElement extends AbstractSqlElement {
 		return final_to_string;
 	}
 	
+	public String getGroupingAttributesString() {
+		String final_to_string = "";
+		Iterator<AttributeVariable> iterator_attribute = this.getGrouping_attributes().iterator();
+		while(iterator_attribute.hasNext()) {
+			final_to_string += iterator_attribute.next().toString() ;
+			if(iterator_attribute.hasNext()) {
+				final_to_string += ", ";
+			}
+		}
+		return final_to_string;
+	}
 
 }

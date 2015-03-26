@@ -1,9 +1,15 @@
 package org.stevens.cs562.sql.sqlimpl;
 
 import java.util.HashMap;
+import java.util.Set;
 
+import org.stevens.cs562.sql.Expression;
+import org.stevens.cs562.sql.visit.AggregateExpressionVisitorImpl;
+import org.stevens.cs562.sql.visit.RelationBuilder;
 import org.stevens.cs562.utils.Constants;
+import org.stevens.cs562.utils.GeneratorHelper;
 import org.stevens.cs562.utils.SQLStringParsers;
+import org.stevens.cs562.utils.StringBuilder;
 
 public class SqlSentence {
 
@@ -134,5 +140,77 @@ public class SqlSentence {
 		return selectElement.toString() + fromElement.toString() + whereElement.toString() + groupByElement.toString() + suchThatElement.toString() + havingElement.toString();
 	}
 
+	public String getRelationAlgebra() {
+		String final_string = "";
+		String select_attributes = "SELECT ATTRIBUTES : \n";
+		select_attributes += selectElement.toString() + "\n";
+		final_string += select_attributes  + "\n";
+		
+		String grouping_variable = "GROUPING VARIABLE NUM : \n";
+		grouping_variable += this.getGrouping_variable_dic().size() + "\n";
+		final_string += grouping_variable + "\n";
+		
+		String grouping_attributes = "GROUPING ATTRIBUTES : \n";
+		grouping_attributes += this.getGroupByElement().getGroupingAttributesString() + "\n";
+		final_string += grouping_attributes + "\n";
+		
+		String aggregate_functions = "AGGREGATE FUNCTION LIST : \n";
+		aggregate_functions += getAggregateString() + "\n";
+		final_string += aggregate_functions;
+		
+		String predicates = "PREDICATES  LIST : \n";
+		predicates += getPredicatesString() + "\n";
+		final_string += predicates;
+		
+		String having = "HAVING   : \n";
+		having += this.getHavingElement().toString() + "\n";
+		final_string += having;
+		return final_string;
+	}
+	
+	private String getAggregateString() {
+		String aggregate = "";
+		AggregateExpressionVisitorImpl visitor = new AggregateExpressionVisitorImpl();
+		GeneratorHelper.getAllAggregateExpression(visitor, this);
+		Set<AggregateExpression> expressions = visitor.getAggregate_expression();
+		//--------------------find the reasonable aggregates
+		for(GroupingVaribale variable : this.getGrouping_variable_dic().values()) {
+			String tmp = "{";
+			String result = "";
+			for(AggregateExpression expression : expressions) {
+				if(expression.getVariable().getBelong().equals(variable)) {
+					result += expression.getConvertionName()  + ", ";
+				}
+			}
+			if(StringBuilder.isEmpty(result)) {
+				result = "NO AGGREGATES";
+			} else {
+				result = result.replaceAll(",\\s+$", "");
+			}
+			tmp +=  result + "}=>" + variable.toString() + "\n";
+			aggregate += tmp;
+		}
+		
+		return aggregate;
+	}
+	
+	private String getPredicatesString() {
+		String predicates = "";
+		RelationBuilder relationBuilder = new RelationBuilder(this);
+		//--------------------find the reasonable aggregates
+		for(GroupingVaribale variable : this.getGrouping_variable_dic().values()) {
+			String tmp = "{";
+			Expression expression = relationBuilder.getSuchThatBlockExpressionByVariable(variable);
+			if(expression != null) {
+				tmp += expression.toString();
+			} else {
+				tmp += "NO PREDICATES";
+			}
+			
+			tmp += "}=>" + variable.toString() + "\n";
+			predicates += tmp;
+		}
+		return predicates;
+	}
 	
 }

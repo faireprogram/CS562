@@ -109,4 +109,6 @@ public class Constants {
 	public static String GENERATE_EMF = "EMF";
 	
 	public static String GENERATE_MF = "MF";
+	
+	public static String RELATION_ALGEBRA = "relation_algebra_output.txt";
 }

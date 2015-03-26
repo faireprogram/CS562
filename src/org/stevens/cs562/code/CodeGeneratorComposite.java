@@ -32,5 +32,6 @@ public class CodeGeneratorComposite {
 	public void generate() {
 		generator.generateTable();
 		generator.generateMain();
+		generator.generateRelationAlgebra();
 	}
 }

@@ -40,9 +40,18 @@ public class SelectElement extends AbstractSqlElement {
 	@Override
 	public String toString() {
 		Iterator<Expression> iterator = projectItems.iterator();
-		String final_to_string = null;
+		String final_to_string = "";
 		while(iterator.hasNext()) {
-			final_to_string += iterator.next().toString();
+			Expression expression = iterator.next();
+			if(expression instanceof ComparisonAndComputeExpression) {
+				ComparisonAndComputeExpression changeExpression = (ComparisonAndComputeExpression) expression;
+				final_to_string += changeExpression.getLeft().getConvertionName() + changeExpression.getOperator() + changeExpression.getRight().getConvertionName();
+			} else {
+				final_to_string += expression.getConvertionName();
+				if(iterator.hasNext()) {
+					final_to_string += " , ";
+				}
+			}
 		}
 		return final_to_string;
 	}

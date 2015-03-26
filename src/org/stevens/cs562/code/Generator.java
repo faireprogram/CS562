@@ -13,4 +13,9 @@ public interface Generator {
 	 */
 	public void generateMain();
 	
+	/**
+	 * generateRelationAlgebra
+	 */
+	public void generateRelationAlgebra();
+	
 }

@@ -633,4 +633,25 @@ public abstract class AbstractCodeGenerator implements Generator{
 	protected String getOutPutMainName() {
 		return Constants.GENERATE_CODE_MF_MAIN;
 	}
+	
+	protected String getRelationAlgebraName() {
+		return Constants.RELATION_ALGEBRA;
+	}
+	
+	/*
+	 * Generate RelationAlgebra-------------------------------------------------------
+	 */
+	public void generateRelationAlgebra() {
+		String path;
+		try {
+			path = ResourceHelper.getValue("output");
+			FileOutputStream algebra = new FileOutputStream(path +getRelationAlgebraName());
+			String algebra_content = this.sqlsentence.getRelationAlgebra();
+			algebra.write(algebra_content.getBytes(), 0, algebra_content.length());
+			algebra.flush();
+			algebra.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} 
+	}
 }

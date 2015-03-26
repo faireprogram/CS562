@@ -7,6 +7,7 @@ import java.util.List;
 import org.stevens.cs562.sql.AbstractSqlElement;
 import org.stevens.cs562.sql.Expression;
 import org.stevens.cs562.utils.SQLStringParsers;
+import org.stevens.cs562.utils.StringBuilder;
 
 public class HavingElement extends AbstractSqlElement {
 
@@ -51,9 +52,12 @@ public class HavingElement extends AbstractSqlElement {
 	@Override
 	public String toString() {
 		Iterator<Expression> iterator = this.getHaving_expressions().iterator();
-		String final_to_string = null;
+		String final_to_string = "";
 		while(iterator.hasNext()) {
 			final_to_string += iterator.next().toString();
+		}
+		if(StringBuilder.isEmpty(final_to_string)) {
+			return "NO HAVING";
 		}
 		return final_to_string;
 	}

@@ -2,3 +2,4 @@
 	from Sales
 	group by prod, month, year : X, Y
 	such that  X.prod = prod and X.month = month and X.year = year, Y.year = year and Y.month = month
+    having prod = "Butter"
