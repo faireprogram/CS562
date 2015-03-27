@@ -74,7 +74,17 @@ public class ComparisonAndComputeExpression extends AbstractExpression{
 	 */
 	@Override
 	public String toString() {
-		return this.left.toString() + " " + this.operator.toString() + " " + this.right.toString();
+		String final_string = "";
+		String left_part = this.left.toString();
+		String right_part = this.right.toString();
+		if(left instanceof AggregateExpression) {
+			left_part = this.getLeft().getConvertionName();
+		}
+		if(right instanceof AggregateExpression) {
+			right_part = this.getRight().getConvertionName();
+		}
+		final_string = left_part + " " + this.getOperator() + " " + right_part + " ";
+		return final_string;
 	}
 
 
