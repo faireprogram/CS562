@@ -1,9 +1,7 @@
 package org.stevens.cs562.sql.sqlimpl;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.stevens.cs562.sql.AbstractVariable;

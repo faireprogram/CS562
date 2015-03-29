@@ -5,7 +5,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -13,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.tools.Diagnostic;
-import javax.tools.DiagnosticCollector;
 import javax.tools.DiagnosticListener;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
@@ -83,11 +81,12 @@ public class DynamicCompiler {
                 null, 
                 compilationUnit);
         if (task.call()) {
-        	 URLClassLoader classLoader = new URLClassLoader(new URL[]{current_compile_path.toURI().toURL()});
+			URLClassLoader classLoader = new URLClassLoader(new URL[]{current_compile_path.toURI().toURL()});
         	 Class<?> cls = classLoader.loadClass(this.main_class_name);
         	 Method main = cls.getDeclaredMethod("main", String[].class); // get the main method using reflection
         	 Object[] args = new Object[] { new String[0] };
         	 main.invoke(null, args);
+        	 classLoader.close();
         	 
         }
 	}

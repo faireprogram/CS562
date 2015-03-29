@@ -5,7 +5,6 @@ import org.stevens.cs562.sql.AggregateOperator;
 import org.stevens.cs562.sql.Variable;
 import org.stevens.cs562.sql.visit.Visitor;
 import org.stevens.cs562.utils.Constants;
-import org.stevens.cs562.utils.StringBuilder;
 
 /**
  * @author faire_000

@@ -3,16 +3,12 @@ package org.stevens.cs562.sql.visit;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.stevens.cs562.sql.AggregateOperator;
 import org.stevens.cs562.sql.Expression;
-import org.stevens.cs562.sql.Variable;
 import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
 import org.stevens.cs562.sql.sqlimpl.IntegerExpression;
 import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
 import org.stevens.cs562.sql.sqlimpl.StringExpression;
-import org.stevens.cs562.utils.graph.AdjacentList;
-import org.stevens.cs562.utils.graph.AdjacentNode;
 
 /**
  * @author faire_000
