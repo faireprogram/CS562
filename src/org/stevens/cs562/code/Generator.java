@@ -18,4 +18,9 @@ public interface Generator {
 	 */
 	public void generateRelationAlgebra();
 	
+	/**
+	 * generatePom
+	 */
+	public void generatePom();
+	
 }

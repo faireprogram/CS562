@@ -1,5 +1,6 @@
 package org.stevens.cs562.code;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.stevens.cs562.sql.AggregateOperator;
 import org.stevens.cs562.sql.ComparisonAndComputeOperator;
@@ -68,10 +70,8 @@ public abstract class AbstractCodeGenerator implements Generator{
 	 * Generate TABLE ------------------------------------------------------------------BEGIN
 	 */
 	public void generateTable() {
-		String path;
 		try {
-			path = ResourceHelper.getValue("output");
-			FileOutputStream mf_table = new FileOutputStream(path +getOutPutTableName() + ".java");
+			FileOutputStream mf_table = new FileOutputStream(getFinal_Path() +getOutPutTableName() + ".java");
 			generateMF_Table(mf_table);
 			mf_table.close();
 		} catch (IOException e) {
@@ -145,6 +145,23 @@ public abstract class AbstractCodeGenerator implements Generator{
 		file.close();
 	}
 	
+	private String getFinal_Path() {
+		String path =  getProperPath() + "src/";
+		File src = new File(path);
+		if(!src.exists()) {
+			src.mkdirs();
+		}
+		return path;
+	}
+	
+	private String getProperPath() {
+		String path = ResourceHelper.getValue("output");
+		if(!(path.charAt(path.length()-1) == '/')) {
+			path = path + "/";
+		} 
+		return path;
+	}
+	
 	/*
 	 * Generate TABLE -------------------------------------------------------------------END
 	 */
@@ -157,9 +174,8 @@ public abstract class AbstractCodeGenerator implements Generator{
 	 */
 	public void generateMain() {
 		try {
-			String path = ResourceHelper.getValue("output");
 			FileOutputStream mf_main;
-			mf_main = new FileOutputStream(path + getOutPutMainName() + ".java");
+			mf_main = new FileOutputStream(getFinal_Path() + getOutPutMainName() + ".java");
 			generateMF_Main(mf_main);
 			mf_main.close();
 		} catch (FileNotFoundException e) {
@@ -642,10 +658,8 @@ public abstract class AbstractCodeGenerator implements Generator{
 	 * Generate RelationAlgebra-------------------------------------------------------
 	 */
 	public void generateRelationAlgebra() {
-		String path;
 		try {
-			path = ResourceHelper.getValue("output");
-			FileOutputStream algebra = new FileOutputStream(path +getRelationAlgebraName());
+			FileOutputStream algebra = new FileOutputStream(getFinal_Path() +getRelationAlgebraName());
 			String algebra_content = this.sqlsentence.getRelationAlgebra();
 			algebra.write(algebra_content.getBytes(), 0, algebra_content.length());
 			algebra.flush();
@@ -653,5 +667,21 @@ public abstract class AbstractCodeGenerator implements Generator{
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 
+	}
+
+	/*
+	 * Generate POM-------------------------------------------------------
+	 */
+	public void generatePom() {
+		
+		try {
+			String pom = ResourceHelper.readPOM(getOutPutMainName());
+			FileOutputStream pom_stream = new FileOutputStream( getProperPath() +"pom.xml");
+			pom_stream.write(pom.getBytes(), 0, pom.length());
+			pom_stream.flush();
+			pom_stream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

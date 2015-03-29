@@ -25,7 +25,7 @@ public class TestGenerator {
 		/*
 		 * MF
 		 */
-		CodeGeneratorComposite composite = new CodeGeneratorComposite(Constants.GENERATE_MF);
+		CodeGeneratorComposite composite = new CodeGeneratorComposite(Constants.GENERATE_EMF);
 		composite.generate();
 		
 
@@ -33,8 +33,8 @@ public class TestGenerator {
 		/*
 		 * dynamic MF
 		 */
-		DynamicCompiler compiler = new DynamicCompiler(Constants.GENERATE_CODE_MF_MAIN);
-		compiler.compileAndRun();
+//		DynamicCompiler compiler = new DynamicCompiler(Constants.GENERATE_CODE_MF_MAIN);
+//		compiler.compileAndRun();
 	}
 	
 

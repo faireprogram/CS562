@@ -33,5 +33,6 @@ public class CodeGeneratorComposite {
 		generator.generateTable();
 		generator.generateMain();
 		generator.generateRelationAlgebra();
+		generator.generatePom();
 	}
 }
