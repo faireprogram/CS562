@@ -49,7 +49,7 @@ public class SQLStringParsers {
 			strings[i] = strings[i].trim();
 			element.getProjectItems().add(processExpression(strings[i], element.getSelfSentce().getGrouping_variable_dic()));
 		}
-		System.out.println(element);
+//		System.out.println(element);
 	}
 	
 	public static void parseStringToFromElement(String sql, FromElement element) {
@@ -112,7 +112,7 @@ public class SQLStringParsers {
 			}
 			
 		}
-		System.out.println(element);
+//		System.out.println(element);
 	}
 	
 	public static void parseStringToHavingElement(String sql, HavingElement element) {

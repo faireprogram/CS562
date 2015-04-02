@@ -68,7 +68,7 @@ public class RelationBuilder {
 		TopologicalGraph<GroupingVaribale> grouping_variable_graph = new TopologicalGraph<GroupingVaribale>(list);
 		List<Collection<AdjacentNode<GroupingVaribale>>> layers = grouping_variable_graph.sort();
 		
-		System.out.println("Current Layer is " + layers.size());
+//		System.out.println("Current Layer is " + layers.size());
 		return layers;
 	}
 	

@@ -61,6 +61,7 @@ public class DynamicCompiler {
 	
 	private void compile() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
 		File current_compile_path = new File(compile_path);
+		File postgresql_lib = new File(System.getProperty("user.dir") + "\\lib\\postgresql-9.4-1201.jdbc41.jar");
 		current_compile_path.mkdirs();
 		
 		DiagnosticListener<JavaFileObject> diaglistener = new MyDiagnosticListener();
@@ -69,9 +70,10 @@ public class DynamicCompiler {
 		List<String> optionList = new ArrayList<String>();
 		optionList.add("-d");
 		optionList.add(current_compile_path.getAbsolutePath());
-		optionList.add("-classpath");
-        optionList.add(System.getProperty("java.class.path") + ";dist/InlineCompiler.jar");
+		optionList.add("-cp");
+        optionList.add(System.getProperty("java.class.path") + ";dist/InlineCompiler.jar;" + System.getProperty("user.dir") + "\\lib\\postgresql-9.4-1201.jdbc41.jar");
        System.out.println(optionList);
+       System.out.println(System.getProperty("user.dir"));
         Iterable<? extends JavaFileObject> compilationUnit  = fileManager.getJavaFileObjectsFromFiles(Arrays.asList(loadAllJavaFiles()));
         JavaCompiler.CompilationTask task = compiler.getTask(
         		null, 
@@ -81,7 +83,7 @@ public class DynamicCompiler {
                 null, 
                 compilationUnit);
         if (task.call()) {
-			URLClassLoader classLoader = new URLClassLoader(new URL[]{current_compile_path.toURI().toURL()});
+			URLClassLoader classLoader = new URLClassLoader(new URL[]{current_compile_path.toURI().toURL(), postgresql_lib.toURI().toURL()});
         	 Class<?> cls = classLoader.loadClass(this.main_class_name);
         	 Method main = cls.getDeclaredMethod("main", String[].class); // get the main method using reflection
         	 Object[] args = new Object[] { new String[0] };

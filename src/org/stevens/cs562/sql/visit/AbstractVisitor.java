@@ -34,26 +34,26 @@ public abstract class AbstractVisitor implements Visitor  {
 	}
 
 	public void visit(SimpleExpression expression) {
-		System.out.println("Visit SimpleExpression");
+//		System.out.println("Visit SimpleExpression");
 	}
 
 	public void visit(ComparisonAndComputeExpression expression) {
 		
 		expression.getLeft().accept(this);
 		expression.getRight().accept(this);
-		System.out.println("Visit ComparisonAndComputeExpression");
+//		System.out.println("Visit ComparisonAndComputeExpression");
 	}
 
 	public void visit(AggregateExpression expression) {
-		System.out.println("Visit AggregateExpression");
+//		System.out.println("Visit AggregateExpression");
 	}
 	
 	public void visit(IntegerExpression expression) {
-		System.out.println("Visit IntegerExpression");
+//		System.out.println("Visit IntegerExpression");
 	}
 	
 	public void visit(StringExpression expression) {
-		System.out.println("Visit StringExpression");
+//		System.out.println("Visit StringExpression");
 	}
 
 	
