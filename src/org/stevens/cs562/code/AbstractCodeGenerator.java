@@ -34,6 +34,9 @@ import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.GeneratorHelper;
 import org.stevens.cs562.utils.ResourceHelper;
 import org.stevens.cs562.utils.graph.AdjacentNode;
+import org.stevens.cs562.utils.StringBuilder;
+
+import com.sun.org.apache.xpath.internal.operations.Variable;
 
 public abstract class AbstractCodeGenerator implements Generator{
 
@@ -146,20 +149,11 @@ public abstract class AbstractCodeGenerator implements Generator{
 	}
 	
 	private String getFinal_Path() {
-		String path =  getProperPath() + "src/";
-		File src = new File(path);
-		if(!src.exists()) {
-			src.mkdirs();
-		}
-		return path;
+		return StringBuilder.getFinalPath(ResourceHelper.getValue("output"));
 	}
-	
+//	
 	private String getProperPath() {
-		String path = ResourceHelper.getValue("output");
-		if(!(path.charAt(path.length()-1) == '/')) {
-			path = path + "/";
-		} 
-		return path;
+		return StringBuilder.getProperPath(ResourceHelper.getValue("output"));
 	}
 	
 	/*
@@ -247,8 +241,8 @@ public abstract class AbstractCodeGenerator implements Generator{
 		}
 		
 		incent++;
-		boolean sum_count = false;
-		boolean count_count = false;
+		HashMap<String, Boolean> expression_status = new HashMap<String, Boolean>();
+		expression_status.get("DD");
 		for(AggregateExpression expression : current_variable.getAll_aggregates()) {
 			// AVG
 			if(expression.getOperator().equals(AggregateOperator.AVERAGE)) {
@@ -256,16 +250,16 @@ public abstract class AbstractCodeGenerator implements Generator{
 				String fragment1 = "";
 				String fragment2 = "";
 				//sum
-				if(!sum_count) {
+				if(expression_status.get(strs[0]) == null) {
 					fragment1 = GeneratorHelper.ind(incent) + "list.get(position)." + 
 							 strs[0] + " = " + "list.get(position)." + strs[0] + " + rs" + current_scan + ".getInt(\"" + expression.getVariable().getName() + "\");\n";
-					sum_count = true;
+					expression_status.put(strs[0], true);
 				}
 				//count
-				if(!count_count) {
+				if(expression_status.get(strs[1]) == null) {
 					fragment2 = GeneratorHelper.ind(incent) + "list.get(position)." + 
 							 strs[1] + " = " + "list.get(position)." + strs[1] + " + 1;\n";
-					count_count = true;
+					expression_status.put(strs[1], true);
 				}
 
 				//sum / count
@@ -292,20 +286,20 @@ public abstract class AbstractCodeGenerator implements Generator{
 				mfTable += fragment1;
 			}
 			//count count
-			if(expression.getOperator().equals(AggregateOperator.COUNT) && !count_count) {
+			if(expression.getOperator().equals(AggregateOperator.COUNT) && expression_status.get(expression.getConvertionName()) == null) {
 				//count
 				String fragment1 = GeneratorHelper.ind(incent) + "list.get(position)." + 
 								 expression.getConvertionName() + " = " + "list.get(position)." + expression.getConvertionName() + " + 1;\n";
 				mfTable += fragment1;
-				count_count = true;
+				expression_status.put(expression.getConvertionName(), true);
 			}
 			//count sum
-			if(expression.getOperator().equals(AggregateOperator.SUM) && !sum_count) {
+			if(expression.getOperator().equals(AggregateOperator.SUM) && expression_status.get(expression.getConvertionName()) == null) {
 				//sum
 				String fragment1 = GeneratorHelper.ind(incent) + "list.get(position)." + 
 						expression.getConvertionName() + " = " + "list.get(position)." + expression.getConvertionName() + " + rs" + current_scan +".getInt(\"" + expression.getVariable().getName() + "\");\n";
 				mfTable += fragment1;
-				sum_count = true;
+				expression_status.put(expression.getConvertionName(), true);
 			}
 		} 
 		if(current_shedule_expressions != null) {
@@ -561,22 +555,34 @@ public abstract class AbstractCodeGenerator implements Generator{
 	}
 	
 	protected String generateStringFromCondition(AggregateExpression left, ComparisonAndComputeExpression right, ComparisonAndComputeOperator operator) {
-		String fragment = "mf_entry." + left.getConvertionName() + " " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		String fragment = "list.get(position)." + left.getConvertionName() + " " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		if(current_step == 1) {
+			fragment = "mf_entry." + left.getConvertionName() + " " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		}
 		return fragment;
 	}
 	
 	protected String generateStringFromCondition(ComparisonAndComputeExpression left, AggregateExpression right, ComparisonAndComputeOperator operator) {
-		String fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ")" + " " + operator.getJava_name() + "mf_entry." + right.getConvertionName();
+		String fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ")" + " " + operator.getJava_name() + "list.get(position)." + right.getConvertionName();
+		if(current_step == 1) {
+			fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ")" + " " + operator.getJava_name() + "mf_entry." + right.getConvertionName();
+		}
 		return fragment;
 	}
 	
 	protected String generateStringFromCondition(SimpleExpression left, ComparisonAndComputeExpression right, ComparisonAndComputeOperator operator) {
-		String fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() + "\") " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		String fragment = "list.get(position)." + left.getVariable().getName() + " " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		if(current_step == 1) {
+			fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() + "\") " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		}
 		return fragment;
 	}
 	
 	protected String generateStringFromCondition(ComparisonAndComputeExpression left, SimpleExpression right, ComparisonAndComputeOperator operator) {
-		String fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ")" + operator.getJava_name() + "rs" + current_scan +".getInt(\"" + right.getVariable().getName() + "\") ";
+		String fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ")" + operator.getJava_name() + " list.get(position)." + right.getVariable().getName();
+		if(current_step == 1) {
+			fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ")" + operator.getJava_name() + "rs" + current_scan +".getInt(\"" + right.getVariable().getName() + "\") ";
+		}
 		return fragment;
 	}
 	

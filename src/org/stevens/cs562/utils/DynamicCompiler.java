@@ -25,8 +25,8 @@ public class DynamicCompiler {
 	String main_class_name;
 	
 	public DynamicCompiler(String main_class_name) throws IOException {
-		this.path = ResourceHelper.getValue("output");
-		this.compile_path = this.path + "\\output\\class";
+		this.path = StringBuilder.getFinalPath(ResourceHelper.getValue("output"));
+		this.compile_path = this.path + "output/class";
 		this.main_class_name = main_class_name;
 	}
 	

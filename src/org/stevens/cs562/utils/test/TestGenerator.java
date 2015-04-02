@@ -33,8 +33,8 @@ public class TestGenerator {
 		/*
 		 * dynamic MF
 		 */
-//		DynamicCompiler compiler = new DynamicCompiler(Constants.GENERATE_CODE_MF_MAIN);
-//		compiler.compileAndRun();
+		DynamicCompiler compiler = new DynamicCompiler(Constants.GENERATE_CODE_EMF_MAIN);
+		compiler.compileAndRun();
 	}
 	
 

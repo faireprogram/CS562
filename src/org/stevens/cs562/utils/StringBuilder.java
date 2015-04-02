@@ -1,5 +1,6 @@
 package org.stevens.cs562.utils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -178,5 +179,21 @@ public class StringBuilder {
 			return matcher.start();
 		}
 		return -1;
+	}
+	
+	public static String getProperPath(String path) {
+		if(!(path.charAt(path.length()-1) == '/')) {
+			path = path + "/";
+		} 
+		return path;
+	}
+	
+	public static String getFinalPath(String path) {
+		String path1 =  getProperPath(path) + "src/";
+		File src = new File(path1);
+		if(!src.exists()) {
+			src.mkdirs();
+		}
+		return path1;
 	}
 }
