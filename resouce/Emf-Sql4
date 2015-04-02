@@ -3,3 +3,4 @@
 	where year = 1997 and month > 1 and month < 12
 	group by prod, month, year : X, Y
 	such that  X.prod = prod and X.month = month -1 , Y.prod = prod and Y.month = month + 1
+	

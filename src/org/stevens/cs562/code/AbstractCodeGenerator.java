@@ -1,6 +1,5 @@
 package org.stevens.cs562.code;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,11 +10,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.stevens.cs562.sql.AggregateOperator;
 import org.stevens.cs562.sql.ComparisonAndComputeOperator;
 import org.stevens.cs562.sql.Expression;
+import org.stevens.cs562.sql.Variable;
 import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
 import org.stevens.cs562.sql.sqlimpl.AttributeVariable;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
@@ -33,10 +32,8 @@ import org.stevens.cs562.sql.visit.RelationBuilder;
 import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.GeneratorHelper;
 import org.stevens.cs562.utils.ResourceHelper;
-import org.stevens.cs562.utils.graph.AdjacentNode;
 import org.stevens.cs562.utils.StringBuilder;
-
-import com.sun.org.apache.xpath.internal.operations.Variable;
+import org.stevens.cs562.utils.graph.AdjacentNode;
 
 public abstract class AbstractCodeGenerator implements Generator{
 
@@ -154,6 +151,10 @@ public abstract class AbstractCodeGenerator implements Generator{
 //	
 	private String getProperPath() {
 		return StringBuilder.getProperPath(ResourceHelper.getValue("output"));
+	}
+	
+	private boolean isGroupingAttribute(Variable a) {
+		return this.sqlsentence.isGroupingAttribute(a);
 	}
 	
 	/*
@@ -572,6 +573,9 @@ public abstract class AbstractCodeGenerator implements Generator{
 	
 	protected String generateStringFromCondition(SimpleExpression left, ComparisonAndComputeExpression right, ComparisonAndComputeOperator operator) {
 		String fragment = "list.get(position)." + left.getVariable().getName() + " " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		if(!isGroupingAttribute(left.getVariable())) {
+			fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() + "\") " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		}
 		if(current_step == 1) {
 			fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() + "\") " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
 		}
@@ -580,6 +584,9 @@ public abstract class AbstractCodeGenerator implements Generator{
 	
 	protected String generateStringFromCondition(ComparisonAndComputeExpression left, SimpleExpression right, ComparisonAndComputeOperator operator) {
 		String fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ")" + operator.getJava_name() + " list.get(position)." + right.getVariable().getName();
+		if(!isGroupingAttribute(right.getVariable())) {
+			fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ")" + operator.getJava_name() + "rs" + current_scan +".getInt(\"" + right.getVariable().getName() + "\") ";
+		}
 		if(current_step == 1) {
 			fragment = "(" + generateStringFromCondition(left.getLeft(), left.getRight(), left.getOperator()) + ")" + operator.getJava_name() + "rs" + current_scan +".getInt(\"" + right.getVariable().getName() + "\") ";
 		}

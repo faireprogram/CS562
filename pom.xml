@@ -43,7 +43,7 @@
 				</executions>
 				<configuration>
 					<executable>java</executable>
-					<mainClass>org.stevens.cs562.utils.test.TestGenerator</mainClass>
+					<mainClass>org.stevens.cs562.utils.test.GeneratorMain</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

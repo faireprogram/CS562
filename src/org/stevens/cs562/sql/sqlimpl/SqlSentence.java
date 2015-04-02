@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Set;
 
 import org.stevens.cs562.sql.Expression;
+import org.stevens.cs562.sql.Variable;
 import org.stevens.cs562.sql.visit.AggregateExpressionVisitorImpl;
 import org.stevens.cs562.sql.visit.RelationBuilder;
 import org.stevens.cs562.utils.Constants;
@@ -213,4 +214,13 @@ public class SqlSentence {
 		return predicates;
 	}
 	
+	public boolean isGroupingAttribute(Variable variable) {
+		boolean result = false;
+		for(AttributeVariable gpattr : this.getGroupByElement().getGrouping_attributes()) {
+			if(gpattr.getName().equals(variable.getName())) {
+				result = true;
+			}
+		}
+		return result;
+	}
 }

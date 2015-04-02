@@ -1,6 +1,7 @@
-	select prod, month, count( X.quant), count( Y.quant), count(Z.quant), Max(Y.quant)
+	select month, count( X.quant), count( Y.quant), count(Z.quant), Max(Y.quant)
 	from Sales
 	where year=1997 or month = 2
-	group by prod, month : X, Y, Z
+	group by  month : X, Y, Z
 	such that quant > avg(X.quant)/2 and prod = "Milk" , Y.quant < avg(quant), X.year >1995, Z.quant > avg(X.quant)
 	having  count(Y.quant) = 1
+	

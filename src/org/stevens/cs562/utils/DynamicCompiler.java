@@ -31,6 +31,10 @@ public class DynamicCompiler {
 	}
 	
 	public void compileAndRun() {
+			System.out.println("[INFO] ############################################################################### ");
+			System.out.println("[INFO] #######################             Show Result             ################### ");
+			System.out.println("[INFO] ############################################################################### ");
+			System.out.println();
 			try {
 				compile();
 			} catch (ClassNotFoundException e) {
@@ -62,7 +66,10 @@ public class DynamicCompiler {
 	private void compile() throws ClassNotFoundException, NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IOException {
 		File current_compile_path = new File(compile_path);
 		File postgresql_lib = new File(System.getProperty("user.dir") + "\\lib\\postgresql-9.4-1201.jdbc41.jar");
-		current_compile_path.mkdirs();
+		if(current_compile_path.exists()) {
+			current_compile_path.deleteOnExit();
+			current_compile_path.mkdirs();
+		}
 		
 		DiagnosticListener<JavaFileObject> diaglistener = new MyDiagnosticListener();
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
@@ -72,8 +79,8 @@ public class DynamicCompiler {
 		optionList.add(current_compile_path.getAbsolutePath());
 		optionList.add("-cp");
         optionList.add(System.getProperty("java.class.path") + ";dist/InlineCompiler.jar;" + System.getProperty("user.dir") + "\\lib\\postgresql-9.4-1201.jdbc41.jar");
-       System.out.println(optionList);
-       System.out.println(System.getProperty("user.dir"));
+//       System.out.println(optionList);
+//       System.out.println(System.getProperty("user.dir"));
         Iterable<? extends JavaFileObject> compilationUnit  = fileManager.getJavaFileObjectsFromFiles(Arrays.asList(loadAllJavaFiles()));
         JavaCompiler.CompilationTask task = compiler.getTask(
         		null, 
@@ -104,14 +111,25 @@ public class DynamicCompiler {
 	
 	private File[] loadAllJavaFiles() {
 		File folder = new File(path);
-		File[] files = folder.listFiles(new JavaFileFilter());
+		File[] files = folder.listFiles(new JavaFileFilter(this.main_class_name.toLowerCase().startsWith("emf")));
 		return files;
 	}
 	
 	private class JavaFileFilter implements FilenameFilter {
 		
+		private String prefix;
+		
+		public JavaFileFilter(boolean emf) {
+			if(emf) {
+				this.prefix = "emf";
+			} else {
+				this.prefix = "mf";
+			}
+			
+		}
+
 		public boolean accept(File dir, String name) {
-			return name.toLowerCase().endsWith("java");
+			return name.toLowerCase().startsWith(this.prefix) && name.toLowerCase().endsWith("java");
 		}
 		
 	}

@@ -4,3 +4,5 @@
 	group by prod, month, year : X, Y
 	such that  X.prod = prod and X.month > month, Y.year = year and Y.month < month
 	having prod = "Milk"
+	
+	
