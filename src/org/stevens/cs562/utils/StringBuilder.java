@@ -19,6 +19,54 @@ public class StringBuilder {
 		return s1.equals(s2);
 	}
 	
+	public static boolean isAndOrOr(String s1) {
+		Pattern pattern = Pattern.compile("\\band\\b|\\bor\\b", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(s1);
+		if(s1 == null) {
+			return false;
+		}
+		if(matcher.find()) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isCompare(String s1) {
+		Pattern pattern = Pattern.compile(">=|<=|<>|>|<|=", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(s1);
+		if(s1 == null) {
+			return false;
+		}
+		if(matcher.find()) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isAlgorith(String s1) {
+		Pattern pattern = Pattern.compile("\\+|-|\\*|/", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(s1);
+		if(s1 == null) {
+			return false;
+		}
+		if(matcher.find()) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isCompareOrSingle(String s1) {
+		Pattern pattern = Pattern.compile("\\band\\b|\\bor\\b", Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(s1);
+		if(s1 == null) {
+			return false;
+		}
+		if(matcher.find()) {
+			return true;
+		}
+		return false;
+	}
+	
 	public static boolean isEmpty(String s1) {
 		if(s1 == null) {
 			return true;
@@ -45,6 +93,16 @@ public class StringBuilder {
 			return false;
 		}
 		if(s1.trim().matches("^'.+?'$") || s1.trim().matches("\".+?\"$")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean isReplacement(String s1) {
+		if(s1 == null) {
+			return false;
+		}
+		if(s1.trim().matches("^" + Constants.CHARACTER_REPLACEMENT + "\\d+" +"$")) {
 			return true;
 		}
 		return false;
@@ -92,6 +150,31 @@ public class StringBuilder {
 			}
 		}
 		return results;
+	}
+	
+	public static String replaceSqlWithReplacement(String sql, List<String> replacements) {
+		for(int i = replacements.size() -1 ; i >= 0 ; i--) {
+			sql = sql.replaceAll("\\Q(" + replacements.get(i) + ")\\E", Constants.CHARACTER_REPLACEMENT + i);
+		}
+		return sql;
+	}
+	
+	public static String getBackReplacementSql(String sql, String replacement) {
+		List<String> replacements = splitStringFromParenthesis(sql);
+		int index = Integer.valueOf(replacement.trim().replaceAll(Constants.CHARACTER_REPLACEMENT, ""));
+		String result = "";
+		for(int i = replacements.size() -1 ; i >= 0 ; i--) {
+			if(index == i) {
+				result = replacements.get(i);
+				break;
+			}
+		}
+		List<String> replacements_result = splitStringFromParenthesis(result.trim());
+		if(replacements_result.size() != 0) {
+			SQLStringParsers.current_sql = result.trim();
+		}
+		result = replaceSqlWithReplacement(result.trim(), replacements_result);
+		return result.trim();
 	}
 	
 	public static String[] splitSqlIntoStringArray(String a) {

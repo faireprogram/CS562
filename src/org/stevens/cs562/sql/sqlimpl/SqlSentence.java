@@ -143,27 +143,27 @@ public class SqlSentence {
 
 	public String getRelationAlgebra() {
 		String final_string = "";
-		String select_attributes = "SELECT ATTRIBUTES : \n";
+		String select_attributes = "SELECT ATTRIBUTES(S): \n";
 		select_attributes += selectElement.toString() + "\n";
 		final_string += select_attributes  + "\n";
 		
-		String grouping_variable = "GROUPING VARIABLE NUM : \n";
-		grouping_variable += this.getGrouping_variable_dic().size() + "\n";
+		String grouping_variable = "GROUPING VARIABLE NUM(n) : \n";
+		grouping_variable += this.getGrouping_variable_dic().size() - 1 + "\n";
 		final_string += grouping_variable + "\n";
 		
-		String grouping_attributes = "GROUPING ATTRIBUTES : \n";
+		String grouping_attributes = "GROUPING ATTRIBUTES(V) : \n";
 		grouping_attributes += this.getGroupByElement().getGroupingAttributesString() + "\n";
 		final_string += grouping_attributes + "\n";
 		
-		String aggregate_functions = "AGGREGATE FUNCTION LIST : \n";
+		String aggregate_functions = "AGGREGATE FUNCTION LIST([F]) : \n";
 		aggregate_functions += getAggregateString() + "\n";
 		final_string += aggregate_functions;
 		
-		String predicates = "PREDICATES  LIST : \n";
+		String predicates = "PREDICATES  LIST([σ]) : \n";
 		predicates += getPredicatesString() + "\n";
 		final_string += predicates;
 		
-		String having = "HAVING   : \n";
+		String having = "HAVING   (θ): \n";
 		having += this.getHavingElement().toString() + "\n";
 		final_string += having;
 		return final_string;

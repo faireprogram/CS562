@@ -78,7 +78,7 @@ public abstract class AbstractVariable implements Variable{
 	public String toString() {
 		//if(getBelong().getName())
 		if(this.getBelong() != null && !this.getBelong().getName().equals(Constants.GROUPING_ZERO)) {
-			return this.getBelong().getName() + "." + getName();
+			return this.getBelong().getAlias() + "." + getName();
 		}
 		return  getName();
 	}

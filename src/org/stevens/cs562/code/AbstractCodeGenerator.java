@@ -528,15 +528,6 @@ public abstract class AbstractCodeGenerator implements Generator{
 		return fragment;
 	}
 	
-	protected String generateStringFromCondition(AggregateExpression left, AggregateExpression right, ComparisonAndComputeOperator operator) {
-		
-		String fragment = "";
-		if(current_step == 1) {
-			fragment = "mf_entry." + left.getConvertionName() + " " + operator.getJava_name() + " " + "mf_entry." + right.getConvertionName();
-		}
-		return fragment;
-	}
-	
 	protected String generateStringFromCondition(SimpleExpression left, StringExpression right, ComparisonAndComputeOperator operator) {
 		String fragment =  "rs" + current_scan +".getString(\"" + left.getVariable().getName() +"\").equals(" + right + ")";
 		if(current_step == 1) {
@@ -603,6 +594,14 @@ public abstract class AbstractCodeGenerator implements Generator{
 		String fragment = "list.get(position)." + left.getConvertionName() + " " + operator.getJava_name() + " " + right.getValue();
 		if(current_step == 1) {
 			fragment ="mf_entry." + left.getConvertionName() + " " + operator.getJava_name() + " " + right.getValue();
+		}
+		return fragment;
+	}
+	
+	protected String generateStringFromCondition(AggregateExpression left, AggregateExpression right, ComparisonAndComputeOperator operator) {
+		String fragment = "list.get(position)." + left.getConvertionName() + " " + operator.getJava_name() + " " + "list.get(position)." + right.getConvertionName();
+		if(current_step == 1) {
+			fragment ="mf_entry." + left.getConvertionName() + " " + operator.getJava_name() + " "  + "mf_entry." + right.getConvertionName();
 		}
 		return fragment;
 	}

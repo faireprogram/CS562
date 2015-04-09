@@ -25,6 +25,7 @@ import org.stevens.cs562.sql.sqlimpl.WhereElement;
 
 public class SQLStringParsers {
 	
+	public static String current_sql = "";
 	
 	/**
 	 * 
@@ -106,9 +107,11 @@ public class SQLStringParsers {
 			if(list_string.size() == 0) {
 				element.getSuch_that_expressions().add(generateComputeOrComparisonExpression(strings[i], element.getSelfSentce().getGrouping_variable_dic()));
 			} else {
-				for(String str : list_string) {
-					element.getSuch_that_expressions().add(generateComputeOrComparisonExpression(str, element.getSelfSentce().getGrouping_variable_dic()));
-				}
+				//for(String str : list_string) {
+				String replace_sql = StringBuilder.replaceSqlWithReplacement(strings[i], list_string);
+				current_sql = strings[i];
+					element.getSuch_that_expressions().add(generateComputeOrComparisonExpression(replace_sql, element.getSelfSentce().getGrouping_variable_dic()));
+				//}
 			}
 			
 		}
@@ -133,6 +136,18 @@ public class SQLStringParsers {
 	 */
 	private static Expression processExpression(String express, HashMap<String, GroupingVaribale> dic) {
 		Expression final_expression = null;
+		if(StringBuilder.isReplacement(express)) {
+			String replaceSql = StringBuilder.getBackReplacementSql(current_sql, express);
+			if(StringBuilder.isAndOrOr(replaceSql)) {
+				return (ComparisonAndComputeExpression)generateComputeOrComparisonExpression(replaceSql, dic);
+			}
+			if(StringBuilder.isCompare(replaceSql)) {
+				return gernerateComparisonAndComputeExpression(replaceSql, dic);
+			}
+			if(StringBuilder.isCompute(replaceSql)) {
+				return generateSingleComputeExpression(replaceSql, dic);
+			}
+		}
 		if(StringBuilder.isCompute(express.trim())) {
 			return generateSingleComputeExpression(express, dic);
 		}
@@ -271,6 +286,14 @@ public class SQLStringParsers {
 	}
 	
 	private static ComparisonAndComputeExpression gernerateComparisonAndComputeExpression(String sql, HashMap<String, GroupingVaribale> dic) {
+		if(StringBuilder.isReplacement(sql)) {
+			sql = StringBuilder.getBackReplacementSql(current_sql, sql);
+			if(StringBuilder.isAndOrOr(sql)) {
+				return (ComparisonAndComputeExpression)generateComputeOrComparisonExpression(sql, dic);
+			} else if(StringBuilder.isCompare(sql)) {
+				return gernerateComparisonAndComputeExpression(sql, dic);
+			}
+		}
 		String regex = ">=|<=|<>|>|<|=";
 		
 		ComparisonAndComputeOperator operator = ComparisonAndComputeOperator.GREATER;

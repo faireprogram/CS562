@@ -73,6 +73,8 @@ public class Constants {
 	 */
 	public static int ERROR_SYNTAX_Having = 5;
 	
+	public static String CHARACTER_REPLACEMENT = "_____REPLACEMENT";
+	
 	/**
 	 * GENERATE_CODE_MF_TABLE
 	 */

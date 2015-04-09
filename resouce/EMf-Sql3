@@ -1,7 +1,7 @@
 	select prod, month, avg( X.quant), avg(Y.quant), Max(Z.quant), count(Y.quant)
 	from Sales
 	where year=1997
-	group by prod, month : X , Y, Z
-	such that X.prod=prod and 3*X.month>=maX(month) or AVG(X.month) <=month, Y.prod=prod and Y.month<month, Z.month = 1
-	having prod = "Milk" 
+	group by prod, month : X , Y, Z, H, S
+	such that X.prod=prod and 3*X.quant >= (maX(Y.quant) + max(H.quant) + avg(S.quant)) and X.month = month , Y.prod=prod and Y.month<month, Z.month = 1 and Z.quant > avg(quant), AVG(X.month) <=month and prod = prod, H.prod = prod, S.prod = prod
+	having prod = "Milk"  
 	

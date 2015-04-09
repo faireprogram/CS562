@@ -3,6 +3,7 @@ package org.stevens.cs562.sql.visit;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.stevens.cs562.sql.ComparisonAndComputeOperator;
 import org.stevens.cs562.sql.Expression;
 import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
@@ -33,84 +34,68 @@ public class RelationBuilderVisitor extends AbstractVisitor{
 	private class LeftRightSingleLayerVisitor extends AbstractVisitor {
 
 		/* (non-Javadoc)
-		 * @see org.stevens.cs562.sql.visit.AbstractVisitor#visit(org.stevens.cs562.sql.sqlimpl.SimpleExpression)
-		 */
-		@Override
-		public void visit(SimpleExpression expression) {
-			initialize_pair(expression);
-		}
-		
-		
-
-		/* (non-Javadoc)
-		 * @see org.stevens.cs562.sql.visit.AbstractVisitor#visit(org.stevens.cs562.sql.sqlimpl.IntegerExpression)
-		 */
-		@Override
-		public void visit(IntegerExpression expression) {
-			initialize_pair(expression);
-		}
-		
-		/* (non-Javadoc)
-		 * @see org.stevens.cs562.sql.visit.AbstractVisitor#visit(org.stevens.cs562.sql.sqlimpl.StringExpression)
-		 */
-		@Override
-		public void visit(StringExpression expression) {
-			initialize_pair(expression);
-		}
-
-
-
-		/* (non-Javadoc)
 		 * @see org.stevens.cs562.sql.visit.AbstractVisitor#visit(org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression)
 		 */
 		@Override
 		public void visit(ComparisonAndComputeExpression expression) {
 			
-			if(expression.getLeft() instanceof ComparisonAndComputeExpression && !(expression.getRight() instanceof ComparisonAndComputeExpression)) {
-				initialize_pair(expression.getRight(), (ComparisonAndComputeExpression)expression.getLeft());
-				return;
-			}
-			if(expression.getRight() instanceof ComparisonAndComputeExpression && !(expression.getLeft() instanceof ComparisonAndComputeExpression)) {
-				initialize_pair(expression.getLeft(), (ComparisonAndComputeExpression)expression.getRight());
-				return;
-			}
+			filterExpression(expression);
 			
-			// left visit
-			isLeftVisit = true;
-			expression.getLeft().accept(this);
-			// right visit
-			isLeftVisit = false;
-			expression.getRight().accept(this);
+		}
+		
+		private boolean isAndOrOr(ComparisonAndComputeExpression expression) {
+			return expression.getOperator().equals(ComparisonAndComputeOperator.AND) || expression.getOperator().equals(ComparisonAndComputeOperator.OR);
+		}
+		
+		private boolean isAlgorith(ComparisonAndComputeExpression expression) {
+			return expression.getOperator().equals(ComparisonAndComputeOperator.ADDITION) || expression.getOperator().equals(ComparisonAndComputeOperator.MULTIPLICATION) 
+					|| expression.getOperator().equals(ComparisonAndComputeOperator.MINUS) || expression.getOperator().equals(ComparisonAndComputeOperator.DIVID) ;
+		}
+		
+		private boolean isCompare(ComparisonAndComputeExpression expression) {
+			return !isAndOrOr(expression) && !isAlgorith(expression);
+		}
+		
+		private void filterExpression(Expression expression) {
+			
+			if(expression instanceof ComparisonAndComputeExpression) {
+				List<Expression> left_expressions = new ArrayList<Expression>();
+				List<Expression> right_expressions = new ArrayList<Expression>();
+				ComparisonAndComputeExpression tmp = (ComparisonAndComputeExpression)expression;
+				if(isCompare(tmp)) {// 1.quant >= (quant  + z.quant)
+					AggregateExpressionVisitorImpl agg_visit1 = new AggregateExpressionVisitorImpl();
+					SimpleExpressionVisitorImpl simple_visit1 = new SimpleExpressionVisitorImpl();
+					agg_visit1.visit(tmp.getLeft());
+					simple_visit1.visit(tmp.getLeft());
+					left_expressions.addAll(agg_visit1.getAggregate_expression());
+					left_expressions.addAll(simple_visit1.getSimples_expression());
+					
+					AggregateExpressionVisitorImpl agg_visit2 = new AggregateExpressionVisitorImpl();
+					SimpleExpressionVisitorImpl simple_visit2 = new SimpleExpressionVisitorImpl();
+					agg_visit2.visit(tmp.getRight());
+					simple_visit2.visit(tmp.getRight());
+					right_expressions.addAll(agg_visit2.getAggregate_expression());
+					right_expressions.addAll(simple_visit2.getSimples_expression());
+					
+					initialize_pair(left_expressions, right_expressions);
+				}
+				if(isAndOrOr(tmp)) {// 1.quant >= (quant  + z.quant) and 1.month = 1 and 1.prod = prod
+					filterExpression(((ComparisonAndComputeExpression) expression).getLeft());
+					filterExpression(((ComparisonAndComputeExpression) expression).getRight());
+				}
+			} 
+			
 		}
 
-		/* (non-Javadoc)
-		 * @see org.stevens.cs562.sql.visit.AbstractVisitor#visit(org.stevens.cs562.sql.sqlimpl.AggregateExpression)
-		 */
-		@Override
-		public void visit(AggregateExpression expression) {
-			initialize_pair(expression);
-		}
 		
-		private void initialize_pair(Expression expression) {
-			if(isLeftVisit) {
-				Pair pair = new Pair();
-				pair.setLeft(expression);
-				pairs.add(pair);
-			} else {
-				pairs.get(pairs.size()-1).setRight(expression);
-			}
-		}
-		
-		private void initialize_pair(Expression expression1, ComparisonAndComputeExpression expression2) {
-			AggregateExpressionVisitorImpl aggregation_visitor = new AggregateExpressionVisitorImpl();
-			aggregation_visitor.visit(expression2.getLeft());
-			aggregation_visitor.visit(expression2.getRight());
-			for(AggregateExpression agg_exp : aggregation_visitor.getAggregate_expression()) {
-				Pair pair = new Pair();
-				pair.setLeft(expression1);
-				pair.setRight(agg_exp);
-				pairs.add(pair);
-			}
+		private void initialize_pair(List<Expression> left_expressions, List<Expression> right_expression) {
+			for(Expression left : left_expressions)
+				for(Expression right : right_expression) {
+					Pair pair = new Pair();
+					pair.setLeft(left);
+					pair.setRight(right);
+					pairs.add(pair);
+				}
 		}
 		
 	}
