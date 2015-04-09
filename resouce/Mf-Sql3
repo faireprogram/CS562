@@ -2,6 +2,6 @@
 	from Sales
 	where year=1997 or month = 2
 	group by prod, month : X, Y, Z
-	such that Z.quant > avg(X.quant) , Y.year <1996, X.year >1995
+	such that Z.quant > avg(X.quant) , Y.year <1996 and Y.quant < avg(quant), X.year >1995
 	having  prod = "Milk" and count(Y.quant) = 1
 	

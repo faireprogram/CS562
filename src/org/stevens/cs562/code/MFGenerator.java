@@ -14,6 +14,7 @@ import org.stevens.cs562.sql.sqlimpl.GroupByElement;
 import org.stevens.cs562.sql.sqlimpl.GroupingVaribale;
 import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.GeneratorHelper;
+import org.stevens.cs562.utils.StringBuilder;
 import org.stevens.cs562.utils.graph.AdjacentNode;
 
 /**
@@ -129,17 +130,17 @@ public class MFGenerator extends AbstractCodeGenerator{
 			str +=			GeneratorHelper.gl("}", 5);
 			str +=			GeneratorHelper.gl("}", 4);
 			str +=			GeneratorHelper.BLANK;
-			str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE", 4);
+			str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE ", 4);
 			str +=			GeneratorHelper.gl("if(is_find) {", 4);
-			str +=			GeneratorHelper.gc("  SuchThat Condition => " + shechdule.toString() , 5);
+			str +=			GeneratorHelper.gl("//  SuchThat Condition => " + shechdule.toString() , 5);
 			for(int z = 0; z < schedule_expressions.size() ; z++) {
-			str +=			updateMFTable_Ifexist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z), 5);
+			str +=			generateSuchThat_IfExist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z), 4);
 			}
 			str +=			GeneratorHelper.gl("} else { ", 4);
 			str += 			generateMFTable_Header_Assignment(5);
-			str +=			GeneratorHelper.gc("  SuchThat Condition => " + shechdule.toString() , 5);
+			str +=			GeneratorHelper.gl("//  SuchThat Condition => " + shechdule.toString() , 5);
 			for(int z = 0; z < schedule_expressions.size() ; z++) {
-			str +=			updateMFTable_IfnonExist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z),5);
+			str +=			generateSuchThat_IfNoExist(shedule_variable.get(z),(ComparisonAndComputeExpression)schedule_expressions.get(z),4);
 			}
 			str += 			GeneratorHelper.ind(5) + "if(flag_update) {\n";
 			str += 			GeneratorHelper.ind(6) + "list.add(mf_entry);\n";
@@ -153,6 +154,30 @@ public class MFGenerator extends AbstractCodeGenerator{
 		}
 		
 		return str;
+	}
+	
+	private String generateSuchThat_IfExist(GroupingVaribale g_variable, ComparisonAndComputeExpression current_expression,int incent) {
+		String suchthat_condition = GeneratorHelper.gc("  UPDATE EMF_TABLE FOR " + g_variable, incent + 1);
+		String result = updateMFTable_Ifexist(g_variable,current_expression, incent + 1);
+		if(StringBuilder.isEmpty(result)) {
+			suchthat_condition += GeneratorHelper.gl(Constants.MESSAGE_NO_AGGREGATES + g_variable, incent + 1);
+		} else {
+			suchthat_condition += result;
+		}
+		suchthat_condition += GeneratorHelper.BLANK;
+		return suchthat_condition;
+	}
+	
+	private String generateSuchThat_IfNoExist(GroupingVaribale g_variable, ComparisonAndComputeExpression current_expression,int incent) throws SQLException {
+		String suchthat_condition = GeneratorHelper.gc("  UPDATE EMF_TABLE FOR " + g_variable, incent + 1);
+		String result = updateMFTable_IfnonExist(g_variable,current_expression, incent + 1);
+		if(StringBuilder.isEmpty(result)) {
+			suchthat_condition += GeneratorHelper.gl(Constants.MESSAGE_NO_AGGREGATES + g_variable, incent + 1);
+		} else {
+			suchthat_condition += result;
+		}
+		suchthat_condition += GeneratorHelper.BLANK;
+		return suchthat_condition;
 	}
 	
 	private String generateMFTable_Header_Assignment(int incent) throws SQLException {

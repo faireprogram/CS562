@@ -111,4 +111,6 @@ public class Constants {
 	public static String GENERATE_MF = "MF";
 	
 	public static String RELATION_ALGEBRA = "relation_algebra_output.txt";
+	
+	public static String MESSAGE_NO_AGGREGATES = "// No Aggregates for Variable:  ";
 }

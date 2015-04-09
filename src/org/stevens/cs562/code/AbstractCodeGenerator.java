@@ -242,8 +242,10 @@ public abstract class AbstractCodeGenerator implements Generator{
 		}
 		
 		incent++;
+		if(current_shedule_expressions == null) { // no condition
+			incent--;
+		}
 		HashMap<String, Boolean> expression_status = new HashMap<String, Boolean>();
-		expression_status.get("DD");
 		for(AggregateExpression expression : current_variable.getAll_aggregates()) {
 			// AVG
 			if(expression.getOperator().equals(AggregateOperator.AVERAGE)) {
@@ -323,6 +325,10 @@ public abstract class AbstractCodeGenerator implements Generator{
 			mfTable   += ( s + ") {\n ");
 		}
 		incent++;
+		
+		if(current_shedule_expressions == null) { // no condition
+			incent--;
+		}
 		
 		/*
 		 * Aggregate Operator
@@ -618,6 +624,9 @@ public abstract class AbstractCodeGenerator implements Generator{
 			}
 			if(tyString.equals(Constants.INTERGER_TYPE)) { 
 				fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() +"\") == " + "list.get(position)."  + right.getVariable().getName();
+			}
+			if(operator.equals(ComparisonAndComputeOperator.NOT_EQUAL)) {
+				fragment = "!(" + fragment + ")";
 			}
 			if(current_step == 1) {
 					fragment = "mf_entry." + left.getVariable().getName() +".equals(" + right.getVariable().getName() + ")";

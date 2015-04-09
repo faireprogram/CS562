@@ -1,0 +1,7 @@
+	select prod , count( X.quant), count( Y.quant), SUM(X.quant), Sum(Y.quant), SUM(X.quant) / SUM(Z.quant)
+	from Sales
+	group by prod : X, Y, Z
+	such that  X.prod = prod and X.state = "NJ" ,  Y.prod <> prod and Y.state = "NJ", Z.state = "NJ" and Z.quant > avg(X.quant)
+	having count(X.quant) * 8 > count(Y.quant)
+	
+	

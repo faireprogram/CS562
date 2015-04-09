@@ -14,6 +14,7 @@ import org.stevens.cs562.sql.sqlimpl.GroupByElement;
 import org.stevens.cs562.sql.sqlimpl.GroupingVaribale;
 import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.GeneratorHelper;
+import org.stevens.cs562.utils.StringBuilder;
 import org.stevens.cs562.utils.graph.AdjacentNode;
 
 
@@ -170,10 +171,12 @@ public class EMFGenerator extends AbstractCodeGenerator{
 			/*
 			 * IF ONLY GROUP BY ELEMENT
 			 */
+			str += 			GeneratorHelper.ind(4) + "for(int position = 0; position < list.size(); position++) { \n";
 			str += 			GeneratorHelper.BLANK;
 			for(int z = 0; z < schedule_expressions.size(); z++) {
 				str += 			generateSuchThatCondition(shedule_variable.get(z), (ComparisonAndComputeExpression)schedule_expressions.get(z), 4);
 			}
+			str	+=			GeneratorHelper.ind(4) + "} \n";
 			
 			str +=			GeneratorHelper.gl("}", 3);
 			str +=			GeneratorHelper.BLANK;
@@ -186,10 +189,16 @@ public class EMFGenerator extends AbstractCodeGenerator{
 	}
 	
 	private String generateSuchThatCondition(GroupingVaribale g_variable, ComparisonAndComputeExpression current_expression,int incent) {
-		String suchthat_condition = GeneratorHelper.gc("  UPDATE EMF_TABLE FOR " + g_variable, incent);
-		suchthat_condition += GeneratorHelper.ind(incent) + "for(int position = 0; position < list.size(); position++) { \n";
-		suchthat_condition += updateMFTable_Ifexist(g_variable, current_expression, incent + 1);
-		suchthat_condition += GeneratorHelper.ind(incent) + "} \n";
+		String suchthat_condition = GeneratorHelper.gc("  UPDATE EMF_TABLE FOR " + g_variable, incent + 1);
+		//suchthat_condition += GeneratorHelper.ind(incent) + "for(int position = 0; position < list.size(); position++) { \n";
+		String result = updateMFTable_Ifexist(g_variable, current_expression, incent + 1);
+		if(StringBuilder.isEmpty(result)) {
+			suchthat_condition += GeneratorHelper.gl(Constants.MESSAGE_NO_AGGREGATES + g_variable, incent + 1);
+		} else {
+			suchthat_condition += result;
+		}
+		suchthat_condition += GeneratorHelper.BLANK;
+		//suchthat_condition += GeneratorHelper.ind(incent) + "} \n";
 		return suchthat_condition;
 	}
 	

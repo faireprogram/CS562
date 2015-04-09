@@ -2,11 +2,9 @@ package org.stevens.cs562.utils;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -21,7 +19,7 @@ public class ResourceHelper {
 	
 	public static String readFromFile() {
 		String result = "";
-		 
+		String result_debug = "";
 		BufferedReader br = null; 
 		try {
 			 InputStream stream = ResourceHelper.class.getClassLoader().getResourceAsStream(getProperties().getProperty("script_path"));
@@ -31,6 +29,7 @@ public class ResourceHelper {
 			
 			while ((sCurrentLine = br.readLine()) != null) {
 				result = result + sCurrentLine;
+				result_debug = result_debug + sCurrentLine + "\n";
 			}
 			br.close();
 		} catch (FileNotFoundException e) {
@@ -40,7 +39,8 @@ public class ResourceHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		System.out.println("[INFO] DEFAULT SQL CONFIGURATION FILE IS : ");
+		System.out.println(result_debug);
 		return result;
 
 	}
