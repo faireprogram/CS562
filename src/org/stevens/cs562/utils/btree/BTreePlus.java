@@ -73,7 +73,7 @@ public class BTreePlus<T> {
 	    //1: else split the leafNode
 	    List<BTreeNode<T>> splits = btreeNode.splitNode(keyNode);
 	    
-	    //2£ºfind the push up node
+	    //2: push the node
 	    KeyNode<T> pushup_node = splits.get(1).getHead();
 	    
 	    //3: reset the relation

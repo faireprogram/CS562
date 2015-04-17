@@ -5,7 +5,11 @@
 	<artifactId>final-project</artifactId>
 	<version>2015s</version>
 
-
+	<properties>
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+	
 	<build>
 		<finalName>${project.artifactId} -${project.version}</finalName>
 		<!-- <directory>${project.basedir}/target</directory> -->
