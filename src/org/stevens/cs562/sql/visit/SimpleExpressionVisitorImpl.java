@@ -3,7 +3,6 @@ package org.stevens.cs562.sql.visit;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
 import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
 

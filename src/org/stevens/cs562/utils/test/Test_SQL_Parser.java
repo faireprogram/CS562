@@ -1,7 +1,5 @@
 package org.stevens.cs562.utils.test;
 
-import org.stevens.cs562.sql.sqlimpl.SqlSentence;
-import org.stevens.cs562.utils.ResourceHelper;
 
 public class Test_SQL_Parser {
 

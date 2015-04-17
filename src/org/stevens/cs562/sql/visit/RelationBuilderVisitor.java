@@ -5,11 +5,7 @@ import java.util.List;
 
 import org.stevens.cs562.sql.ComparisonAndComputeOperator;
 import org.stevens.cs562.sql.Expression;
-import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
-import org.stevens.cs562.sql.sqlimpl.IntegerExpression;
-import org.stevens.cs562.sql.sqlimpl.SimpleExpression;
-import org.stevens.cs562.sql.sqlimpl.StringExpression;
 
 /**
  * @author faire_000

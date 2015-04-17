@@ -2,9 +2,7 @@ package org.stevens.cs562.utils.test;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.stream.Stream;
 
 import org.stevens.cs562.code.CodeGeneratorComposite;
 import org.stevens.cs562.utils.Constants;
