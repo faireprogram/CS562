@@ -90,25 +90,22 @@ public class AdjacentNodeImpl<T> implements AdjacentNode<T>{
 	
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result;
-		result = prime * result
-				+ ((edgeVetex == null) ? 0 : edgeVetex.hashCode());
-		result = prime * result + ((next == null) ? 0 : next.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		int result = this.getValue().hashCode() * 31;
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
 		if (obj == null)
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		return true;
+		if (obj instanceof AdjacentNodeImpl) {
+			@SuppressWarnings("unchecked")
+			AdjacentNode<T> t_val = (AdjacentNodeImpl<T>)obj;
+			if(this.value.equals(t_val.getValue())) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/* (non-Javadoc)

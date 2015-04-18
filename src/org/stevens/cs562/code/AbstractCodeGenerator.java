@@ -312,6 +312,10 @@ public abstract class AbstractCodeGenerator implements Generator{
 	}
 	
 	protected String updateMFTable_IfnonExist(GroupingVaribale current_variable, ComparisonAndComputeExpression current_shedule_expressions, int incent) throws SQLException {
+		return updateMFTable_IfnonExist(current_variable, current_shedule_expressions, incent, true);
+	}
+	
+	protected String updateMFTable_IfnonExist(GroupingVaribale current_variable, ComparisonAndComputeExpression current_shedule_expressions, int incent, boolean should_add_flag) throws SQLException {
 		/*
 		 * Grouping Attributes
 		 */
@@ -378,7 +382,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 				mfTable += fragment1;
 			}
 			
-			if(!express_iterator.hasNext()) {
+			if(!express_iterator.hasNext() && should_add_flag) {
 				mfTable +=  GeneratorHelper.ind(incent) + "flag_update = true;\n";
 			}
 			
@@ -388,6 +392,34 @@ public abstract class AbstractCodeGenerator implements Generator{
 			mfTable += GeneratorHelper.ind(incent-1) + "}\n";
 		}
 		return mfTable;
+	}
+	
+	protected String generateSuchThat_IfExist(GroupingVaribale g_variable, ComparisonAndComputeExpression current_expression,int incent) {
+		String suchthat_condition = GeneratorHelper.gc("  UPDATE EMF_TABLE FOR " + g_variable, incent + 1);
+		String result = updateMFTable_Ifexist(g_variable,current_expression, incent + 1);
+		if(StringBuilder.isEmpty(result)) {
+			suchthat_condition += GeneratorHelper.gl(Constants.MESSAGE_NO_AGGREGATES + g_variable, incent + 1);
+		} else {
+			suchthat_condition += result;
+		}
+		suchthat_condition += GeneratorHelper.BLANK;
+		return suchthat_condition;
+	}
+	
+	protected String generateSuchThat_IfNoExist(GroupingVaribale g_variable, ComparisonAndComputeExpression current_expression,int incent) throws SQLException {
+		return generateSuchThat_IfNoExist(g_variable, current_expression, incent, true);
+	}
+	
+	protected String generateSuchThat_IfNoExist(GroupingVaribale g_variable, ComparisonAndComputeExpression current_expression,int incent, boolean should_add_flag) throws SQLException {
+		String suchthat_condition = GeneratorHelper.gc("  UPDATE EMF_TABLE FOR " + g_variable, incent + 1);
+		String result = updateMFTable_IfnonExist(g_variable,current_expression, incent + 1, should_add_flag);
+		if(StringBuilder.isEmpty(result)) {
+			suchthat_condition += GeneratorHelper.gl(Constants.MESSAGE_NO_AGGREGATES + g_variable, incent + 1);
+		} else {
+			suchthat_condition += result;
+		}
+		suchthat_condition += GeneratorHelper.BLANK;
+		return suchthat_condition;
 	}
 	
 

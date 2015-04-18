@@ -1,0 +1,6 @@
+select cust, avg(x.quant), avg(y.quant), avg(z.quant)
+from Sales 
+where year=1997
+group by cust: x,y,z
+such that x.cust=cust and x.state="NY", y.cust=cust and y.state="CT",z.cust=cust and z.state="NJ"
+having avg(x.quant)>avg(y.quant) and avg(x.quant) > avg(z.quant)

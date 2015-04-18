@@ -24,7 +24,7 @@ public class RelationBuilder {
 	/**
 	 * vistor
 	 */
-	private RelationBuilderVisitor vistor = new RelationBuilderVisitor();
+	private RelationBuilderVisitor vistor;
 	
 	/**
 	 * expressions
@@ -34,6 +34,13 @@ public class RelationBuilder {
 	public RelationBuilder( SqlSentence sqlsetence) {
 		super();
 		this.sqlsetence = sqlsetence;
+		this.vistor = new RelationBuilderVisitor();
+	}
+	
+	public RelationBuilder( SqlSentence sqlsetence, RelationBuilderVisitor visitor) {
+		super();
+		this.sqlsetence = sqlsetence;
+		this.vistor = visitor;
 	}
 	
 	public List<Collection<AdjacentNode<GroupingVaribale>>> build() {

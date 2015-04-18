@@ -2,6 +2,6 @@
 	from Sales
 	where year=1997
 	group by prod, month : X , Y, Z, H, S
-	such that X.prod=prod and 3*X.quant >= (maX(Y.quant) + max(H.quant) + avg(S.quant)) and X.month = month , Y.prod=prod and Y.month<month, Z.month = 1 and Z.quant > avg(quant), AVG(X.month) <=month and prod = prod, H.prod = prod, S.prod = prod
+	such that X.prod=prod and 3*X.quant >= (maX(Y.quant) + max(H.quant) + avg(quant)) and X.month = month , Y.prod=prod and Y.month<month, Z.month = 1 and Z.quant > avg(quant), H.prod = prod, S.prod = prod
 	having prod = "Milk"  
 	

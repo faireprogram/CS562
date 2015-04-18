@@ -12,6 +12,9 @@ import org.stevens.cs562.sql.sqlimpl.AttributeVariable;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
 import org.stevens.cs562.sql.sqlimpl.GroupByElement;
 import org.stevens.cs562.sql.sqlimpl.GroupingVaribale;
+import org.stevens.cs562.sql.sqlimpl.SqlSentence;
+import org.stevens.cs562.sql.visit.EmfRelationBuilderVisitor;
+import org.stevens.cs562.sql.visit.RelationBuilder;
 import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.GeneratorHelper;
 import org.stevens.cs562.utils.StringBuilder;
@@ -20,8 +23,15 @@ import org.stevens.cs562.utils.graph.AdjacentNode;
 
 public class EMFGenerator extends AbstractCodeGenerator{
 
+	GroupingVaribale gp_zero;
+	
 	public EMFGenerator(String sql) {
 		super(sql);
+		this.sqlsentence = new SqlSentence(sql);
+		GroupingVaribale zero = this.sqlsentence.getGrouping_variable_dic().get(Constants.GROUPING_ZERO);
+		this.relationBuilder = new RelationBuilder(this.sqlsentence, new EmfRelationBuilderVisitor(zero));
+		this.relationship = this.relationBuilder.build();
+		this.gp_zero = sqlsentence.getGrouping_variable_dic().get(Constants.GROUPING_ZERO);
 	}
 
 	/* (non-Javadoc)
@@ -91,11 +101,14 @@ public class EMFGenerator extends AbstractCodeGenerator{
 	}
 	
 	private String generatate_first_empty_structure() throws SQLException {
+		Expression zero_express = this.relationBuilder.getSuchThatBlockExpressionByVariable(this.gp_zero);
 		String str = "";
 		str +=			GeneratorHelper.gl("ResultSet rs" + current_scan +" = stmt.executeQuery(\"SELECT * FROM Sales\");", 3);
 		str +=			GeneratorHelper.gc(" SCAN " + current_scan + " => Create EMPTY EMF_TABLE ", 3);
 		str += 			GeneratorHelper.gl("while (rs0.next())  {", 3);
 		str += 			GeneratorHelper.gl("boolean is_find = false;", 4);
+		str +=			GeneratorHelper.gl("int position = 0;", 4);
+		
 		str +=			GeneratorHelper.BLANK;
 		/*
 		 * IF SQL WHERE ELEMENT not Exist
@@ -104,19 +117,27 @@ public class EMFGenerator extends AbstractCodeGenerator{
 			str +=			GeneratorHelper.gc("  THIS IS WHERE CONDITION", 4);
 			str +=			generateWhereCondition(4);
 		}
+		
 		str +=			GeneratorHelper.gc("  lookup from EMF_TABLE", 4);
 		str +=			GeneratorHelper.gl("for(int j = 0; j < list.size(); j++) {", 4);
 		str +=			GeneratorHelper.ind(5) + funMFtableEqualTupe();
+		str +=			GeneratorHelper.gl("position = j;", 6);
 		str +=			GeneratorHelper.gl("is_find = true;", 6);
 		str +=			GeneratorHelper.gl("break;", 6);
 		str +=			GeneratorHelper.gl("}", 5);
 		str +=			GeneratorHelper.gl("}", 4);
 		str +=			GeneratorHelper.BLANK;
-		str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE", 4);
-		str +=			GeneratorHelper.gl("if(!is_find) { \n", 4);
-		str +=			generateMFTable_Header_Assignment(5);
-		str +=			GeneratorHelper.gl("} \n", 4);
-		str +=			GeneratorHelper.gl("} \n", 3);
+		str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE ", 4);
+		str +=			GeneratorHelper.gl("if(is_find) {", 4);
+		str +=			generateSuchThat_IfExist( this.gp_zero, (ComparisonAndComputeExpression)zero_express, 4);
+		str +=			GeneratorHelper.gl("} else { ", 4);
+		str += 			generateMFTable_Header_Assignment(5);
+		str +=			generateSuchThat_IfNoExist(this.gp_zero, (ComparisonAndComputeExpression)zero_express,4, false);
+		str += 			GeneratorHelper.ind(5) + "list.add(mf_entry);\n";
+		str +=			GeneratorHelper.gl("}", 4);
+		str +=			GeneratorHelper.gl("}", 3);
+		str +=			GeneratorHelper.BLANK;
+		str +=			GeneratorHelper.BLANK;
 		
 		return str;
 	}
@@ -149,13 +170,17 @@ public class EMFGenerator extends AbstractCodeGenerator{
 			List<Expression> schedule_expressions = new ArrayList<Expression>();
 			List<GroupingVaribale> shedule_variable = new ArrayList<GroupingVaribale>();
 			
+			AdjacentNode<GroupingVaribale> tmp = null;
 			for(AdjacentNode<GroupingVaribale> group_variable : shechdule) {
+				if(this.gp_zero.equals(group_variable.getValue())) {
+					tmp = group_variable;
+					continue;
+				}
 				Expression ls = this.relationBuilder.getSuchThatBlockExpressionByVariable(group_variable.getValue());
 				schedule_expressions.add(ls);
 				shedule_variable.add(group_variable.getValue());
 			}
-			
-		
+			shechdule.remove(tmp);
 			
 			str +=			GeneratorHelper.gl("ResultSet rs" + current_scan +" = stmt.executeQuery(\"SELECT * FROM Sales\");", 3);
 			str +=			GeneratorHelper.gc("   SCAN "+ current_scan+ "  =>  " + shechdule.toString(), 3);
@@ -216,7 +241,6 @@ public class EMFGenerator extends AbstractCodeGenerator{
 			mfTable_header	+= fragment;
 			 
 		}
-		mfTable_header += GeneratorHelper.ind(incent) + "list.add(mf_entry);\n";
 		return mfTable_header;
 	}
 	

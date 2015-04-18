@@ -156,29 +156,6 @@ public class MFGenerator extends AbstractCodeGenerator{
 		return str;
 	}
 	
-	private String generateSuchThat_IfExist(GroupingVaribale g_variable, ComparisonAndComputeExpression current_expression,int incent) {
-		String suchthat_condition = GeneratorHelper.gc("  UPDATE EMF_TABLE FOR " + g_variable, incent + 1);
-		String result = updateMFTable_Ifexist(g_variable,current_expression, incent + 1);
-		if(StringBuilder.isEmpty(result)) {
-			suchthat_condition += GeneratorHelper.gl(Constants.MESSAGE_NO_AGGREGATES + g_variable, incent + 1);
-		} else {
-			suchthat_condition += result;
-		}
-		suchthat_condition += GeneratorHelper.BLANK;
-		return suchthat_condition;
-	}
-	
-	private String generateSuchThat_IfNoExist(GroupingVaribale g_variable, ComparisonAndComputeExpression current_expression,int incent) throws SQLException {
-		String suchthat_condition = GeneratorHelper.gc("  UPDATE EMF_TABLE FOR " + g_variable, incent + 1);
-		String result = updateMFTable_IfnonExist(g_variable,current_expression, incent + 1);
-		if(StringBuilder.isEmpty(result)) {
-			suchthat_condition += GeneratorHelper.gl(Constants.MESSAGE_NO_AGGREGATES + g_variable, incent + 1);
-		} else {
-			suchthat_condition += result;
-		}
-		suchthat_condition += GeneratorHelper.BLANK;
-		return suchthat_condition;
-	}
 	
 	private String generateMFTable_Header_Assignment(int incent) throws SQLException {
 		String mfTable_header = GeneratorHelper.ind(incent) + "MFtable mf_entry = new MFtable();\n";
