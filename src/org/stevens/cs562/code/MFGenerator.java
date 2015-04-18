@@ -14,7 +14,6 @@ import org.stevens.cs562.sql.sqlimpl.GroupByElement;
 import org.stevens.cs562.sql.sqlimpl.GroupingVaribale;
 import org.stevens.cs562.utils.Constants;
 import org.stevens.cs562.utils.GeneratorHelper;
-import org.stevens.cs562.utils.StringBuilder;
 import org.stevens.cs562.utils.graph.AdjacentNode;
 
 /**

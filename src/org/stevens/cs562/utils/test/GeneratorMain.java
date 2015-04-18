@@ -25,7 +25,7 @@ public class GeneratorMain {
 		boolean mf = false;
 		while(true) {
 			line = stdin.readLine();
-			if(line.toLowerCase().trim().equals("emf") || line.toLowerCase().trim().equals("mf")) {
+			if(line.toLowerCase().trim().equals("emf") || line.toLowerCase().trim().equals("mf") || line.toLowerCase().trim().equals("exit")) {
 				break;
 			} else {
 				printString("[ERROR] you input should be \"emf\" or \"mf\" or \"exit\" ");
@@ -51,7 +51,6 @@ public class GeneratorMain {
 		}
 		
 		String str = "";
-		line = "begind";
  		while(!StringBuilder.isEmpty(line)) {
  			line = stdin.readLine();
  			str += line;
