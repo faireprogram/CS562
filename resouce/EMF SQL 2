@@ -1,0 +1,5 @@
+select prod, year , month, sum( X.quant)/sum( Y.quant)
+from Sales
+group by prod, month, year : X, Y
+such that  X.prod = prod and X.month = month and X.year = year, Y.year = year and Y.prod = prod
+having prod = "Butter" and year > 1995
