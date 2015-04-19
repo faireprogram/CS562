@@ -1,8 +1,8 @@
-	select prod, year , month, avg( X.quant), avg( Y.quant), avg( X.quant)/avg( Y.quant), sum(X.quant), sum(Y.quant), count(X.quant), count(Y.quant)
+	select prod , month, avg( X.quant), avg( Y.quant), avg( X.quant)/avg( Y.quant)
 	from Sales
 	where year= 1997
-	group by prod, month, year : X, Y
-	such that  X.prod = prod and X.month > month, Y.year = year and Y.month < month
+	group by prod, month : X, Y
+	such that  X.prod = prod and X.month= month + 1, Y.prod = prod and Y.month = month-1
 	having prod = "Milk"
 	
 	

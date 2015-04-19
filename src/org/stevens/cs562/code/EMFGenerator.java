@@ -104,7 +104,7 @@ public class EMFGenerator extends AbstractCodeGenerator{
 		Expression zero_express = this.relationBuilder.getSuchThatBlockExpressionByVariable(this.gp_zero);
 		String str = "";
 		str +=			GeneratorHelper.gl("ResultSet rs" + current_scan +" = stmt.executeQuery(\"SELECT * FROM Sales\");", 3);
-		str +=			GeneratorHelper.gc(" SCAN " + current_scan + " => Create EMPTY EMF_TABLE ", 3);
+		str +=			GeneratorHelper.gc(" SCAN " + current_scan + " => Initialize Empty EMF Table && Initialize Group 0 measure attributes ", 3);
 		str += 			GeneratorHelper.gl("while (rs0.next())  {", 3);
 		str += 			GeneratorHelper.gl("boolean is_find = false;", 4);
 		str +=			GeneratorHelper.gl("int position = 0;", 4);
@@ -127,7 +127,7 @@ public class EMFGenerator extends AbstractCodeGenerator{
 		str +=			GeneratorHelper.gl("}", 5);
 		str +=			GeneratorHelper.gl("}", 4);
 		str +=			GeneratorHelper.BLANK;
-		str +=  		GeneratorHelper.gc("   UPDATE MF_TABLE ", 4);
+		str +=  		GeneratorHelper.gc("   UPDATE EMF_TABLE ", 4);
 		str +=			GeneratorHelper.gl("if(is_find) {", 4);
 		str +=			generateSuchThat_IfExist( this.gp_zero, (ComparisonAndComputeExpression)zero_express, 4);
 		str +=			GeneratorHelper.gl("} else { ", 4);
