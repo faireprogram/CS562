@@ -395,7 +395,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 	}
 	
 	protected String generateSuchThat_IfExist(GroupingVaribale g_variable, ComparisonAndComputeExpression current_expression,int incent) {
-		String suchthat_condition = GeneratorHelper.gc("  UPDATE EMF_TABLE FOR " + g_variable, incent + 1);
+		String suchthat_condition = GeneratorHelper.gc("  UPDATE " + getOutPutTableName() +" FOR " + g_variable, incent + 1);
 		String result = updateMFTable_Ifexist(g_variable,current_expression, incent + 1);
 		if(StringBuilder.isEmpty(result)) {
 			suchthat_condition += GeneratorHelper.gl(Constants.MESSAGE_NO_AGGREGATES + g_variable, incent + 1);
@@ -411,7 +411,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 	}
 	
 	protected String generateSuchThat_IfNoExist(GroupingVaribale g_variable, ComparisonAndComputeExpression current_expression,int incent, boolean should_add_flag) throws SQLException {
-		String suchthat_condition = GeneratorHelper.gc("  UPDATE EMF_TABLE FOR " + g_variable, incent + 1);
+		String suchthat_condition = GeneratorHelper.gc("  UPDATE " +  getOutPutTableName() + " FOR " + g_variable, incent + 1);
 		String result = updateMFTable_IfnonExist(g_variable,current_expression, incent + 1, should_add_flag);
 		if(StringBuilder.isEmpty(result)) {
 			suchthat_condition += GeneratorHelper.gl(Constants.MESSAGE_NO_AGGREGATES + g_variable, incent + 1);

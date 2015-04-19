@@ -3,7 +3,6 @@ package org.stevens.cs562.sql.sqlimpl;
 import java.util.HashMap;
 import java.util.Set;
 
-import org.stevens.cs562.sql.Expression;
 import org.stevens.cs562.sql.Variable;
 import org.stevens.cs562.sql.visit.AggregateExpressionVisitorImpl;
 import org.stevens.cs562.sql.visit.RelationBuilder;
@@ -201,9 +200,9 @@ public class SqlSentence {
 		//--------------------find the reasonable aggregates
 		for(GroupingVaribale variable : this.getGrouping_variable_dic().values()) {
 			String tmp = "{";
-			Expression expression = relationBuilder.getSuchThatBlockExpressionByVariable(variable);
+			ComparisonAndComputeExpression expression = (ComparisonAndComputeExpression)relationBuilder.getSuchThatBlockExpressionByVariable(variable);
 			if(expression != null) {
-				tmp += expression.toString();
+				tmp += expression.getConvertionName();
 			} else {
 				tmp += "NO PREDICATES";
 			}

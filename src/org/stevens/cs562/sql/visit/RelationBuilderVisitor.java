@@ -3,7 +3,6 @@ package org.stevens.cs562.sql.visit;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.stevens.cs562.sql.ComparisonAndComputeOperator;
 import org.stevens.cs562.sql.Expression;
 import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
 
@@ -14,8 +13,8 @@ import org.stevens.cs562.sql.sqlimpl.ComparisonAndComputeExpression;
  */
 public class RelationBuilderVisitor extends AbstractVisitor{
  
-	List<Pair> pairs = new ArrayList<Pair>();
-	LeftRightSingleLayerVisitor lrvisitor = new LeftRightSingleLayerVisitor();
+	protected List<Pair> pairs = new ArrayList<Pair>();
+	private LeftRightSingleLayerVisitor lrvisitor = new LeftRightSingleLayerVisitor();
 	
 	boolean isLeftVisit = true;
 	
@@ -37,19 +36,6 @@ public class RelationBuilderVisitor extends AbstractVisitor{
 			
 			filterExpression(expression);
 			
-		}
-		
-		private boolean isAndOrOr(ComparisonAndComputeExpression expression) {
-			return expression.getOperator().equals(ComparisonAndComputeOperator.AND) || expression.getOperator().equals(ComparisonAndComputeOperator.OR);
-		}
-		
-		private boolean isAlgorith(ComparisonAndComputeExpression expression) {
-			return expression.getOperator().equals(ComparisonAndComputeOperator.ADDITION) || expression.getOperator().equals(ComparisonAndComputeOperator.MULTIPLICATION) 
-					|| expression.getOperator().equals(ComparisonAndComputeOperator.MINUS) || expression.getOperator().equals(ComparisonAndComputeOperator.DIVID) ;
-		}
-		
-		private boolean isCompare(ComparisonAndComputeExpression expression) {
-			return !isAndOrOr(expression) && !isAlgorith(expression);
 		}
 		
 		private void filterExpression(Expression expression) {
@@ -134,6 +120,8 @@ public class RelationBuilderVisitor extends AbstractVisitor{
 	public List<Pair> getPairs() {
 		return pairs;
 	}
+	
+	
 	
 	
 }

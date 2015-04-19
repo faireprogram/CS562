@@ -68,6 +68,26 @@ public class ComparisonAndComputeExpression extends AbstractExpression{
 		return getLeft().hashCode() * 71 + getRight().hashCode() * 31 + getOperator().hashCode() * 5;
 	}
 
+	
+
+	/* (non-Javadoc)
+	 * @see org.stevens.cs562.sql.AbstractExpression#getConvertionName()
+	 */
+	@Override
+	public String getConvertionName() {
+		String final_string = "";
+		String left_part = this.left.toString();
+		String right_part = this.right.toString();
+		if(left instanceof AggregateExpression || left instanceof ComparisonAndComputeExpression) {
+			left_part = this.getLeft().getConvertionName();
+		}
+		if(right instanceof AggregateExpression || right instanceof ComparisonAndComputeExpression) {
+			right_part = this.getRight().getConvertionName();
+		}
+		final_string = left_part + " " + this.getOperator() + " " + right_part + " ";
+		return final_string;
+	}
+
 
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
@@ -78,10 +98,10 @@ public class ComparisonAndComputeExpression extends AbstractExpression{
 		String left_part = this.left.toString();
 		String right_part = this.right.toString();
 		if(left instanceof AggregateExpression) {
-			left_part = this.getLeft().getConvertionName();
+			left_part = this.getLeft().toString();
 		}
 		if(right instanceof AggregateExpression) {
-			right_part = this.getRight().getConvertionName();
+			right_part = this.getRight().toString();
 		}
 		final_string = left_part + " " + this.getOperator() + " " + right_part + " ";
 		return final_string;

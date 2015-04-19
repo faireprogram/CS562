@@ -109,7 +109,7 @@ public class RelationBuilder {
 	 * Get All pair From the list by the specified Aggregation
 	 */
 	public Expression getSuchThatBlockExpressionByVariable(GroupingVaribale group_variable) {
-		RelationBuilderVisitor innerVisitor = new RelationBuilderVisitor();
+		RelationBuilderVisitor innerVisitor = new SuchThatRelationVisitor();
 		Expression final_resul = null;
 		SuchThatElement suchThatElement = sqlsetence.getSuchThatElement();
 		for(Expression expresion : suchThatElement.getSuch_that_expressions()) {

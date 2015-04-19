@@ -1,5 +1,6 @@
 package org.stevens.cs562.sql.visit;
 
+import org.stevens.cs562.sql.ComparisonAndComputeOperator;
 import org.stevens.cs562.sql.Expression;
 import org.stevens.cs562.sql.Variable;
 import org.stevens.cs562.sql.sqlimpl.AggregateExpression;
@@ -54,6 +55,19 @@ public abstract class AbstractVisitor implements Visitor  {
 	
 	public void visit(StringExpression expression) {
 //		System.out.println("Visit StringExpression");
+	}
+	
+	protected boolean isAndOrOr(ComparisonAndComputeExpression expression) {
+		return expression.getOperator().equals(ComparisonAndComputeOperator.AND) || expression.getOperator().equals(ComparisonAndComputeOperator.OR);
+	}
+	
+	protected boolean isAlgorith(ComparisonAndComputeExpression expression) {
+		return expression.getOperator().equals(ComparisonAndComputeOperator.ADDITION) || expression.getOperator().equals(ComparisonAndComputeOperator.MULTIPLICATION) 
+				|| expression.getOperator().equals(ComparisonAndComputeOperator.MINUS) || expression.getOperator().equals(ComparisonAndComputeOperator.DIVID) ;
+	}
+	
+	protected boolean isCompare(ComparisonAndComputeExpression expression) {
+		return !isAndOrOr(expression) && !isAlgorith(expression);
 	}
 
 	
