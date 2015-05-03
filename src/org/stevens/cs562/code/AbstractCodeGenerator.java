@@ -55,6 +55,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 	// Global Status Variable
 	protected int current_scan = 0;
 	protected int current_step = 0; // 0 => where/such step, 1 => having
+	protected int is_where_step = 0;
 	
 	public AbstractCodeGenerator(String sql) {
 		this.sqlsentence = new SqlSentence(sql);
@@ -213,6 +214,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 
 	//--------------------------------------- Where Part ---------------------------------------
 	protected String generateWhereCondition(int incent) {
+		is_where_step = 1;
 		String result = GeneratorHelper.ind(incent) + "if(!(";
 		WhereElement element = sqlsentence.getWhereElement();
 		Iterator<Expression> express_iterator = element.getWhere_expressions().iterator();		
@@ -224,6 +226,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 		result += " )) { \n";
 		result += GeneratorHelper.ind(incent+1) + "continue;\n";
 		result += GeneratorHelper.ind(incent) + "}\n";
+		is_where_step = 0;
 		return result;
 	}
 
@@ -601,7 +604,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 	}
 	
 	protected String generateStringFromCondition(SimpleExpression left, ComparisonAndComputeExpression right, ComparisonAndComputeOperator operator) {
-		String fragment = "list.get(position)." + left.getVariable().getName() + " " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
+		String fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() + "\") " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
 		if(!isGroupingAttribute(left.getVariable())) {
 			fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() + "\") " + operator.getJava_name() + "(" + generateStringFromCondition(right.getLeft(), right.getRight(), right.getOperator()) + ")";
 		}
@@ -678,7 +681,10 @@ public abstract class AbstractCodeGenerator implements Generator{
 		return fragment;
 	}
 	protected String generateStringFromCondition(SimpleExpression left, IntegerExpression right, ComparisonAndComputeOperator operator) {
-		String fragment = "rs"+ current_scan +".getInt(\"" + left.getVariable().getName() +"\") " + operator.getJava_name() + " " + right.getValue();
+		String fragment = "list.get(position)." + left.getVariable().getName() + " " + operator.getJava_name() + " " + right.getValue();
+		if(is_where_step == 1) {
+			fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() +"\") " + operator.getJava_name() + " " + right.getValue();
+		}
 		if(current_step == 1) {
 			fragment = "mf_entry." + left.getVariable().getName() +" " + operator.getJava_name()  + right.getValue() ;
 		}

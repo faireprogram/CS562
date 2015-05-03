@@ -73,23 +73,27 @@ public class GeneratorHelper {
 	 * Retrieve back the type via your column, connection from data, and the relation of sqlsentence
 	 */
 	public static String find_type(String column, Connection connection, SqlSentence sqlsentence) throws SQLException {
-		if(sqlsentence.getAttributes_type().get(column) != null) {
-			return sqlsentence.getAttributes_type().get(column);
-		}
 		String type = Constants.STRING_TYPE;
-		String search_type = String.format(Constants.SEARCHING_TYPE, "'sales'", "'" + column + "'");
-		Statement statement = connection.createStatement();
-		ResultSet rs = statement.executeQuery(search_type);
-		rs.next();
-		if(rs.getString(1).toLowerCase().contains("char")) {
-			type = Constants.STRING_TYPE;
-		} 
-		if(rs.getString(1).toLowerCase().contains("int")) {
-			type = Constants.INTERGER_TYPE;
+		try {
+			if(sqlsentence.getAttributes_type().get(column) != null) {
+				return sqlsentence.getAttributes_type().get(column);
+			}
+			String search_type = String.format(Constants.SEARCHING_TYPE, "'sales'", "'" + column + "'");
+			Statement statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery(search_type);
+			rs.next();
+			if(rs.getString(1).toLowerCase().contains("char")) {
+				type = Constants.STRING_TYPE;
+			} 
+			if(rs.getString(1).toLowerCase().contains("int")) {
+				type = Constants.INTERGER_TYPE;
+			}
+			sqlsentence.getAttributes_type().put(column, type);
+		} catch (SQLException e) {
+			System.out.println("ERROR HAPPENS WITH YOUR Column: " + column);
+			throw e;
 		}
-		sqlsentence.getAttributes_type().put(column, type);
 		return type;
-		
 	}
 	
 	
