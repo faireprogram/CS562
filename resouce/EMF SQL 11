@@ -1,0 +1,6 @@
+select prod , month, year,  count(X.quant), count(Y.quant)
+from sales
+group by prod, month, year : X, Y
+such that X.prod = prod and X.month = month - 1 and X.quant > avg(quant) , Y.prod = prod and Y.month = month + 1 and Y.quant > avg(quant)
+having count(X.quant) = count(Y.quant) and count(X.quant) <> 0
+

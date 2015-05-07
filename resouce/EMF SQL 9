@@ -2,4 +2,6 @@ select prod, month, year, count(Z.quant)
 from sales
 where year = 1997
 group by prod, month, year : X, Y, Z
-such that X.prod = prod and X.month = month + 1, Y.prod = prod and Y.month = month - 1, Z.prod = prod and Z.month = month and  Z.quant > avg(X.quant) and Z.quant < avg(Y.quant)
+such that X.prod = prod and X.month = month - 1, Y.prod = prod and Y.month = month + 1, Z.prod = prod and Z.month = month and  Z.quant > avg(X.quant) and Z.quant < avg(Y.quant)
+having count(Z.quant) <> 0
+

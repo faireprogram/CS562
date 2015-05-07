@@ -469,6 +469,9 @@ public abstract class AbstractCodeGenerator implements Generator{
 		String final_string = "";
 		if(!(expression instanceof ComparisonAndComputeExpression)) {
 			final_string =  "next." + expression.getConvertionName();
+			if( expression instanceof IntegerExpression) {
+				final_string = ((IntegerExpression) expression).getValue().toString();
+			}
 		} else {
 			String left = getOutPutString(((ComparisonAndComputeExpression)expression).getLeft() );
 			String right = getOutPutString(((ComparisonAndComputeExpression)expression).getRight() );
