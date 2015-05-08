@@ -660,7 +660,7 @@ public abstract class AbstractCodeGenerator implements Generator{
 				fragment = "rs" + current_scan +".getString(\"" + left.getVariable().getName() +"\").equals(" + "list.get(position)."  + right.getVariable().getName() + ")";
 			}
 			if(tyString.equals(Constants.INTERGER_TYPE)) { 
-				fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() +"\") == " + "list.get(position)."  + right.getVariable().getName();
+				fragment = "rs" + current_scan +".getInt(\"" + left.getVariable().getName() +"\") " + operator.getJava_name() + " " + "list.get(position)."  + right.getVariable().getName();
 			}
 			if(operator.equals(ComparisonAndComputeOperator.NOT_EQUAL)) {
 				fragment = "!(" + fragment + ")";

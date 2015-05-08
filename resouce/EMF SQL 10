@@ -1,6 +1,5 @@
 select cust, month, year, sum(X.quant), sum(Y.quant) , sum(Z.quant)/2
 from sales
 group by cust, month, year : X, Y, Z
-such that X.cust = cust and X.month <= month - 1 and X.year = year, Y.cust = cust and Y.month <= month + 1 and Y.year = year, Z.cust = cust and Z.year = year
-having sum(Z.quant)/2 > sum(X.quant) and sum(Z.quant)/2 < sum(Y.quant)
-
+such that X.cust = cust and X.month <= month - 1 and X.year = year, Y.cust = cust and Y.month <= month and Y.year = year, Z.cust = cust and Z.year = year
+having sum(Z.quant)/2 > sum(X.quant) and sum(Z.quant)/2 <= sum(Y.quant)
