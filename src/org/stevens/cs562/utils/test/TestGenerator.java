@@ -19,8 +19,8 @@ public class TestGenerator {
 //		/*
 //		 * dynamic EMF
 //		 */
-		DynamicCompiler compiler = new DynamicCompiler(Constants.GENERATE_CODE_EMF_MAIN);
-		compiler.compileAndRun();
+//		DynamicCompiler compiler = new DynamicCompiler(Constants.GENERATE_CODE_EMF_MAIN);
+//		compiler.compileAndRun();
 		
 		/*
 		 * MF
